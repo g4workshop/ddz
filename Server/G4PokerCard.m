@@ -1,5 +1,5 @@
 //
-//  G4CardLayer.m
+//  G4PokerCard.m
 //  DDZ
 //
 //  Created by gyf on 12-3-24.
