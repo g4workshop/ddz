@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 
 #import "G4AppDelegate.h"
+#import "G4Packet.h"
 
 int main(int argc, char *argv[])
 {

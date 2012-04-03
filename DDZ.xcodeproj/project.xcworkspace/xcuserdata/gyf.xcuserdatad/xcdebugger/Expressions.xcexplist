@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "-[NSArray(NetPacketObject) initWithBytes:]:G4Packet.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "(char*)buffer">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[G4OutedCardGroup animation::]:G4OutedCardGroup.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "_destX">
+            </PersistentString>
+            <PersistentString
+               value = "_origX">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "+[G4NetPacketPair objectToBytes:::]:G4Packet.m">
+      </ContextState>
+      <ContextState
+         contextName = "dyld_stub_time:(null)">
+         <PersistentStrings>
+            <PersistentString
+               value = "self">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>
