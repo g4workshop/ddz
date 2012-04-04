@@ -11,5 +11,5 @@
 @interface G4PokerView : UIView
 
 @property(nonatomic)char _appState;
-
+@property(nonatomic)char _bkImageIndex;
 @end

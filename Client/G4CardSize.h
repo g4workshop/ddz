@@ -101,4 +101,14 @@
 +(float)resultCellHeight;
 +(float)resultFontSize;
 
++(float)optionViewWidth;
++(float)optionViewSpace;
++(float)optionViewFontSize;
++(float)optionViewCloseButtonSize;
++(float)optionViewSliderHeight;
++(float)optionViewBkGroundButtonSize;
+
++(float)mainViewCmdButtonHeight;
+
+
 @end

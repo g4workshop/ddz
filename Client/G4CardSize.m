@@ -60,6 +60,15 @@ static float result_total_score_width[] = {80.0f, 160.0f};
 static float result_cell_height[] = {30.0f, 60.0f};
 static float result_font_size[] = {16.0f, 32.0f};
 
+static float option_view_width[] = {200.0f, 400.0f};
+static float option_view_space[] = {8.0f, 15.0f};
+static float option_view_font_size[] = {12.0f, 24.0f};
+static float option_view_close_button_size[] = {15.0f, 30.0f};
+static float option_view_slider_height[]= {15.0f, 25.0f};
+static float option_view_bkground_button_size[] = {20.0f, 40.0f};
+
+static float main_view_cmd_button_height[] = {30.0f, 60.0f};
+
 static float card_deal_max_animation_duration = 0.2f;
 
 static char device_type;
@@ -501,6 +510,41 @@ static float max_distance;
 +(float)resultFontSize
 {
     return result_font_size[device_type];
+}
+
++(float)optionViewWidth
+{
+    return option_view_width[device_type];
+}
+
++(float)optionViewSpace
+{
+    return option_view_space[device_type];
+}
+
++(float)optionViewFontSize
+{
+    return option_view_font_size[device_type];
+}
+
++(float)optionViewCloseButtonSize
+{
+    return option_view_close_button_size[device_type];
+}
+
++(float)optionViewSliderHeight
+{
+    return option_view_slider_height[device_type];
+}
+
++(float)optionViewBkGroundButtonSize
+{
+    return option_view_bkground_button_size[device_type];
+}
+
++(float)mainViewCmdButtonHeight
+{
+    return main_view_cmd_button_height[device_type];
 }
 
 @end

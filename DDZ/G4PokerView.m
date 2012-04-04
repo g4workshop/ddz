@@ -15,12 +15,14 @@
 @implementation G4PokerView
 
 @synthesize _appState;
+@synthesize _bkImageIndex;
 
 - (id)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
     if (self) {
         _appState = 0;
+        _bkImageIndex = 0;
     }
     return self;
 }
@@ -30,12 +32,16 @@
 // An empty implementation adversely affects performance during animation.
 - (void)drawRect:(CGRect)rect
 {
+    UIImage* image;
     if(_appState == 0)
-        [[G4CardImage modeSelectBkImage] drawInRect:CGRectMake(0, 0, [G4CardSize deviceViewSize].width, [G4CardSize deviceViewSize].height)];
+        image = [G4CardImage modeSelectBkImage];
     else
-        [[G4CardImage gameBKImage] drawInRect:CGRectMake(0, 0, [G4CardSize deviceViewSize].width, [G4CardSize deviceViewSize].height)];
-    G4ViewController* controller = (G4ViewController*) [UIApplication sharedApplication].delegate.window.rootViewController;
-    [controller._image drawAtPoint:CGPointMake(300, 300)];
+        image = [G4CardImage gameBKImage:_bkImageIndex];
+    
+    [image drawInRect:CGRectMake(0, 0, [G4CardSize deviceViewSize].width, [G4CardSize deviceViewSize].height)];
+
+//    G4ViewController* controller = (G4ViewController*) [UIApplication sharedApplication].delegate.window.rootViewController;
+//    [controller._image drawAtPoint:CGPointMake(300, 300)];
 }
 
 

@@ -14,7 +14,7 @@
 +(void)initAllImages;
 +(void)releaseAllImage;
 +(UIImage*)typeImage:(char)cardType;
-+(UIImage*)gameBKImage;
++(UIImage*)gameBKImage:(char)index;
 +(UIImage*)cardBKImage;
 +(UIImage*)numberImage:(char)index;
 +(UIImage*)createDigitImage:(int)index:(UIColor*)color;

@@ -20,6 +20,7 @@
 #import "G4CmdPannel.h"
 #import "G4FSM.h"
 #import "G4ResultLayer.h"
+#import "G4OptionView.h"
 
 #define G4_DDZ_APP_STATE_SELECT_MODE           0x00
 #define G4_DDZ_APP_STATE_WIFI_MODE             0x01
@@ -37,6 +38,8 @@ int random_player_random_id(void);
     G4WaitingLayer* _waitingLayer;
     G4AdLayer* _adLayer;
     G4ResultLayer* _resultLayer;
+    G4OptionView* _optionView;
+    
     
     NSString* _displayName;
     
@@ -55,6 +58,8 @@ int random_player_random_id(void);
     char _touchBeganOfCardIndex;
     char _touchLastMovedOfCardIndex;
     BOOL _moveSelect;
+    
+    UIButton* _cmdOptionButton;
 }
 
 @property(nonatomic)char _appState;
@@ -67,9 +72,17 @@ int random_player_random_id(void);
 -(void)createModeWifiButton;
 -(void)createModeGamecenterButton;
 
+-(void)createCmdButtons;
+
+-(UIButton*)createCmdButton:(float)rightX:(UIImage*)image;
+
+-(void)onCmdButtonClicked:(id)sender;
+
 -(void)onButtonTouched:(id)sender;
 
 -(char)touchMoveDirction:(char)index1:(char)index2;
+
+-(void)changeBkgroundImage:(char)index;
 @end
 
 

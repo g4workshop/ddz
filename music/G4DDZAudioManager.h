@@ -7,7 +7,32 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <AVFoundation/AVFoundation.h>
+#import "G4DDZRuler.h"
 
-@interface G4DDZAudioManager : NSObject
+@interface G4DDZAudioManager : NSObject<AVAudioPlayerDelegate>
+{
+@private
+    AVAudioPlayer* _backgroundMusicPlayer;
+    AVAudioPlayer* _timeCountPlayer;
+    char _backgroundMusicVolumn;
+}
 
+@property(nonatomic)char backgroundMusicVolumn;
+
++(id)sharedManager;
+
++(void)releaseManager;
+
+-(void)playBackgroundMusic;
+-(void)playTimeCountMusic:(BOOL)play;
+
+-(void)playCardAudio:(CARD_ANALYZE_DATA*)data;
+
+-(void)dealloc;
+
+-(void)changeBackgroundMusicVolumnTo:(char)volumn;
+
+-(void)readMusicVolumn;
+-(void)writeMusicVolumn;
 @end

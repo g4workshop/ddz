@@ -14,6 +14,7 @@
 #import "G4DDZRuler.h"
 #import "G4GameInit.h"
 #import "G4PokerView.h"
+#import "G4DDZAudioManager.h"
 
 
 @implementation G4ViewController
@@ -53,9 +54,18 @@
 //    [group addCard:1];
 //    [group showGroup:YES];
 //    return;
+
     [self createModeWifiButton];
     [self createModeGamecenterButton];
 
+}
+
+-(void)changeBkgroundImage:(char)index
+{   
+    if(((G4PokerView*)self.view)._bkImageIndex == index)
+        return;
+    ((G4PokerView*)self.view)._bkImageIndex = index;
+    [self.view setNeedsDisplay];
 }
 
 - (void)viewDidUnload
@@ -77,8 +87,19 @@
     [_displayName release];
     [_cmdPannel release];
     [_resultLayer  release];
+    [_cmdOptionButton release];
+    [[G4DDZAudioManager sharedManager] releaseManager];
 }
 
+-(void)onCmdButtonClicked:(id)sender
+{
+    UIButton* cmdButton = (UIButton*)sender;
+    if(cmdButton.tag == 1)
+    {
+        _optionView = [[G4OptionView alloc] init:self.view];
+        [_optionView show:YES :10.0f];
+    }
+}
 
 -(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
@@ -243,9 +264,9 @@ int random_player_random_id(void)
     _wifiButton.tag = 1;
     [_wifiButton setImage:[G4CardImage wifiImage] forState:UIControlStateNormal];
     [_wifiButton addTarget:self action:@selector(onButtonTouched:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:_wifiButton];
-    
+    [self.view addSubview:_wifiButton];    
 }
+
 -(void)createModeGamecenterButton
 {
     CGRect buttonRect;
@@ -259,20 +280,44 @@ int random_player_random_id(void)
     [self.view addSubview:_gamecenterButton];
 }
 
+-(void)createCmdButtons
+{
+    UIImage* image = [UIImage imageNamed:@"config.png"];
+    float x = [G4CardSize deviceViewSize].width - [G4CardSize edgeSpace];
+    _cmdOptionButton = [[self createCmdButton:x:image] retain];
+    _cmdOptionButton.tag = 1;
+}
+
+-(UIButton*)createCmdButton:(float)rightX:(UIImage*)image
+{
+    float scaled = [G4CardSize mainViewCmdButtonHeight] / image.size.height;
+    float width = scaled * image.size.width;
+    
+    float x = rightX - width;
+    
+    float y = [G4CardSize edgeSpace];
+    
+    UIButton* button = [[[UIButton alloc] initWithFrame:CGRectMake(x, y, width, [G4CardSize mainViewCmdButtonHeight])] autorelease];
+    
+    [button setShowsTouchWhenHighlighted:YES];
+
+    [button addTarget:self action:@selector(onCmdButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+    [button setImage:image forState:UIControlStateNormal];
+    [self.view addSubview:button];
+    
+    return button;
+}
+
 -(void)onButtonTouched:(id)sender
 {
+    [[G4DDZAudioManager sharedManager] playBackgroundMusic];
+    [self createCmdButtons];
     if(((UIButton*)sender).tag == 1)
     {
-        [_gamecenterButton removeFromSuperview];
-        [_wifiButton removeFromSuperview];
-        [_gamecenterButton release];
-        [_wifiButton release];
         _appState = G4_DDZ_APP_STATE_WIFI_MODE;
         ((G4PokerView*)self.view)._appState = _appState;
         [self.view setNeedsDisplay];
         [self performSelector:@selector(getPlayerName)];
-        //[self initNetworker];
-        //[self doAppStart];
     }
     else
     {
@@ -280,5 +325,9 @@ int random_player_random_id(void)
         [alertView show];
         [alertView release];
     }
+    [_gamecenterButton removeFromSuperview];
+    [_wifiButton removeFromSuperview];
+    [_gamecenterButton release];
+    [_wifiButton release];
 }
 @end

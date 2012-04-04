@@ -11,7 +11,7 @@
 
 static UIImage* type_image[4] = {nil, nil, nil, nil};
 static UIImage* player_image[4] = {nil, nil, nil, nil};
-static UIImage* game_bk_image = nil;
+static UIImage* game_bk_image[] = {nil, nil};
 static UIImage* card_bk_image = nil;
 static UIImage* watcher_image = nil;
 static UIImage* computer_image = nil;
@@ -51,7 +51,8 @@ static char* card_number_str[] = {"2", "3", "4", "5", "6", "7", "8", "9", "10", 
         type_image[1] = [[UIImage imageNamed:@"type_2.png"] retain];
         type_image[2] = [[UIImage imageNamed:@"type_3.png"] retain];
         type_image[3] = [[UIImage imageNamed:@"type_4.png"] retain];
-        game_bk_image = [[UIImage imageNamed:@"game_bk.png"] retain];
+        game_bk_image[0] = [[UIImage imageNamed:@"game_bk_0.png"] retain];
+        game_bk_image[1] = [[UIImage imageNamed:@"game_bk_1.png"] retain];
         card_bk_image = [[UIImage imageNamed:@"card_bk.png"] retain];
         mode_select_bk_image = [[UIImage imageNamed:@"mode_select_back.png"] retain];
 
@@ -76,7 +77,8 @@ static char* card_number_str[] = {"2", "3", "4", "5", "6", "7", "8", "9", "10", 
         [number_image[i] release];
     for(int i = 0; i < 4; i++)
         [type_image[i] release];
-    [game_bk_image release];
+    [game_bk_image[0] release];
+    [game_bk_image[1]  release];
     [card_bk_image release];
     for(int i = 0; i < 4; i++)
         [player_image[i] release];
@@ -89,9 +91,9 @@ static char* card_number_str[] = {"2", "3", "4", "5", "6", "7", "8", "9", "10", 
     return type_image[cardType];
 }
 
-+(UIImage*)gameBKImage
++(UIImage*)gameBKImage:(char)index
 {
-    return game_bk_image;
+    return game_bk_image[index % 2];
 }
 
 +(UIImage*)cardBKImage
