@@ -46,7 +46,6 @@
 		1191B0DF1521B93B00011D08 /* watcher.png in Resources */ = {isa = PBXBuildFile; fileRef = 1191B0DE1521B93B00011D08 /* watcher.png */; };
 		1191B0E61521CF0900011D08 /* G4FloatInfoLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 1191B0E51521CF0800011D08 /* G4FloatInfoLayer.m */; };
 		1191B0E91521FC8600011D08 /* G4CmdPannel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1191B0E81521FC8600011D08 /* G4CmdPannel.m */; };
-		1192642B152AF6A600EF0C50 /* m2.png in Resources */ = {isa = PBXBuildFile; fileRef = 1192642A152AF6A600EF0C50 /* m2.png */; };
 		11950D09152449070013C15C /* G4GameInit.m in Sources */ = {isa = PBXBuildFile; fileRef = 11950D08152449070013C15C /* G4GameInit.m */; };
 		1195E2BC152557A7001F0D31 /* G4GameServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 1195E2BB152557A7001F0D31 /* G4GameServer.m */; };
 		11B2E33B151EDF4000D4BB9B /* G4CardGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 11B2E332151EDF4000D4BB9B /* G4CardGroup.m */; };
@@ -79,6 +78,7 @@
 		11D9E5A2152066E000B82286 /* player.png in Resources */ = {isa = PBXBuildFile; fileRef = 11D9E5A1152066E000B82286 /* player.png */; };
 		11D9E5A61520729D00B82286 /* G4GamePlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 11D9E5A51520729D00B82286 /* G4GamePlayer.m */; };
 		11FD9115151DE48B00E70065 /* G4PokerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 11FD9114151DE48B00E70065 /* G4PokerView.m */; };
+		CF481BB9152B4DAA0099E8B3 /* m2.png in Resources */ = {isa = PBXBuildFile; fileRef = CF481BB8152B4DAA0099E8B3 /* m2.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -132,7 +132,6 @@
 		1191B0E51521CF0800011D08 /* G4FloatInfoLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = G4FloatInfoLayer.m; path = Client/G4FloatInfoLayer.m; sourceTree = "<group>"; };
 		1191B0E71521FC8500011D08 /* G4CmdPannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = G4CmdPannel.h; path = Client/G4CmdPannel.h; sourceTree = "<group>"; };
 		1191B0E81521FC8600011D08 /* G4CmdPannel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = G4CmdPannel.m; path = Client/G4CmdPannel.m; sourceTree = "<group>"; };
-		1192642A152AF6A600EF0C50 /* m2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = m2.png; sourceTree = "<group>"; };
 		11950D07152449070013C15C /* G4GameInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = G4GameInit.h; sourceTree = "<group>"; };
 		11950D08152449070013C15C /* G4GameInit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = G4GameInit.m; sourceTree = "<group>"; };
 		1195E2BA152557A7001F0D31 /* G4GameServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = G4GameServer.h; sourceTree = "<group>"; };
@@ -187,6 +186,7 @@
 		11D9E5A51520729D00B82286 /* G4GamePlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = G4GamePlayer.m; path = Client/G4GamePlayer.m; sourceTree = "<group>"; };
 		11FD9113151DE48B00E70065 /* G4PokerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = G4PokerView.h; sourceTree = "<group>"; };
 		11FD9114151DE48B00E70065 /* G4PokerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = G4PokerView.m; sourceTree = "<group>"; };
+		CF481BB8152B4DAA0099E8B3 /* m2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = m2.png; path = Images/m2.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -356,11 +356,15 @@
 		11D87CA3151D6E2D0084C443 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+<<<<<<< HEAD
 				118B625D152C151C00882977 /* config.png */,
 				118B625B152C0D4100882977 /* close.png */,
 				118B6259152BF1E700882977 /* game_bk_0.png */,
 				118B6257152BF1D600882977 /* game_bk_1.png */,
 				1192642A152AF6A600EF0C50 /* m2.png */,
+=======
+				CF481BB8152B4DAA0099E8B3 /* m2.png */,
+>>>>>>> eeb0a216da7f27c9d038eb4b93e71fd2b5181813
 				11214AC015298F6C0016BC3D /* btn_bq_d.png */,
 				11214AC115298F6C0016BC3D /* btn_bq_e.png */,
 				11214AC215298F6C0016BC3D /* btn_hint.png */,
@@ -471,6 +475,7 @@
 				11214ADD15298F6D0016BC3D /* btn_score_3_e.png in Resources */,
 				11214ADE15298F6D0016BC3D /* btn_score_4_d.png in Resources */,
 				11214ADF15298F6D0016BC3D /* btn_score_4_e.png in Resources */,
+<<<<<<< HEAD
 				1192642B152AF6A600EF0C50 /* m2.png in Resources */,
 				118B6248152BD37000882977 /* music.mp3 in Resources */,
 				118B6253152BE16100882977 /* timecount.mp3 in Resources */,
@@ -478,6 +483,9 @@
 				118B625A152BF1E700882977 /* game_bk_0.png in Resources */,
 				118B625C152C0D4200882977 /* close.png in Resources */,
 				118B625E152C151C00882977 /* config.png in Resources */,
+=======
+				CF481BB9152B4DAA0099E8B3 /* m2.png in Resources */,
+>>>>>>> eeb0a216da7f27c9d038eb4b93e71fd2b5181813
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -495,7 +503,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export CODESIGN_ALLOCATE=/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/codesign_allocate\nif [ \"${PLATFORM_NAME}\" == \"iphoneos\" ]; then\n/Developer/xcode-crack/gen_entitlements.py \"my.company.${PROJECT_NAME}\" \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/${PROJECT_NAME}.xcent\";\ncodesign -f -s \"iPhone Developer\" --entitlements \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/${PROJECT_NAME}.xcent\" \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/\"\nfi";
+			shellScript = "export CODESIGN_ALLOCATE=/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/codesign_allocate\nif [ \"${PLATFORM_NAME}\" == \"iphoneos\" ]; then\n/Developer/iphoneentitlements401/gen_entitlements.py \"my.company.${PROJECT_NAME}\" \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/${PROJECT_NAME}.xcent\";\ncodesign -f -s \"iPhone Developer\" --entitlements \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/${PROJECT_NAME}.xcent\" \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/\"\nfi";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -615,9 +623,15 @@
 		11D87C9C151D64990084C443 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = (
+					armv6,
+					armv7,
+				);
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "DDZ/DDZ-Prefix.pch";
 				INFOPLIST_FILE = "DDZ/DDZ-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -626,9 +640,15 @@
 		11D87C9D151D64990084C443 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = (
+					armv6,
+					armv7,
+				);
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "DDZ/DDZ-Prefix.pch";
 				INFOPLIST_FILE = "DDZ/DDZ-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
