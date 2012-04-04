@@ -14,7 +14,7 @@ static G4DDZAudioManager* _audioManager = nil;
 
 @synthesize backgroundMusicVolumn = _backgroundMusicVolumn;
 
-+(id)sharedManager
++(G4DDZAudioManager*)sharedManager
 {
     @synchronized(_audioManager)
     {
@@ -24,7 +24,7 @@ static G4DDZAudioManager* _audioManager = nil;
     return _audioManager;
 }
 
-+(void)releaseManager
+-(void)releaseManager
 {
     [_audioManager release];
 }
@@ -45,7 +45,7 @@ static G4DDZAudioManager* _audioManager = nil;
     if(_backgroundMusicVolumn != 0 && ![_backgroundMusicPlayer isPlaying])
     {
         _backgroundMusicPlayer.volume = ((float)_backgroundMusicVolumn) / 10.0f;
-        [_backgroundMusicPlayer prepareToPlay];
+        [_backgroundMusicPlayer play];
     }
 }
 
@@ -60,7 +60,7 @@ static G4DDZAudioManager* _audioManager = nil;
         [timeMusicURL  release];
     }
     if(play)
-        [_timeCountPlayer prepareToPlay];
+        [_timeCountPlayer play];
     else if([_timeCountPlayer isPlaying])
         [_timeCountPlayer stop];
 }
@@ -101,7 +101,7 @@ static G4DDZAudioManager* _audioManager = nil;
         else
         {
             if(![_backgroundMusicPlayer isPlaying])
-                [_backgroundMusicPlayer prepareToPlay];
+                [_backgroundMusicPlayer play];
         }
     }
     [self writeMusicVolumn];

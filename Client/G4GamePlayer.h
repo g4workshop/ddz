@@ -38,6 +38,7 @@
 }
 
 @property(nonatomic)BOOL _autoPlay;
+@property(nonatomic)char _timeOutCount;
 @property(nonatomic)char _score;
 @property(nonatomic)BOOL _computerPlayer;
 @property(nonatomic)char _networkState;
@@ -83,6 +84,8 @@
 
 -(NSString*)getPlayerName;
 -(NSString*)getPeerId;
+
+-(BOOL)needServerPlay;
 @end
 
 @protocol G4GameManagerDelegate <NSObject>
@@ -159,6 +162,7 @@
 
 
 -(void)reset;
+-(void)resetPlayRecord;
 -(void)roundResult:(char)winner;
 
 -(void)setOutedCard:(G4Packet*)packet;
@@ -166,5 +170,8 @@
 -(void)resetOutedCard;
 
 -(BOOL)isAllPlayerStateOf:(char)state;
+
+-(void)gamePlayerDisconnected:(char)playerId;
+-(void)rmvDisconnectedPlayer;
 
 @end

@@ -35,8 +35,23 @@ static NSString* out_card_info = @"不出";
     [self run:packet];
 }
 
+-(void)onPlayerDisconnected:(G4Packet*)packet
+{
+    NSString* peerId = [packet get:G4_KEY_COMM_ID];
+    G4GamePlayer* player = [_gameManager findGamePlayer:peerId];
+#ifndef G4_LOGING_INFO
+    NSLog(@"RECV PlayerDisconnected,PlayerId=%d,PeerId=%@\n",
+          player._playerId, peerId);
+#endif
+
+    if(_gameState != G4_GAME_WAITING_PLAYERS)
+        [_gameManager gamePlayerDisconnected:player._playerId];
+}
+
 -(void)run:(G4Packet*)packet
 {
+    if(packet.packetId == G4_COMM_DISCONNECTED)
+        [self onPlayerDisconnected:packet];
     switch (_gameState)
     {
         case G4_GAME_INITING:
@@ -349,7 +364,11 @@ static NSString* out_card_info = @"不出";
 #ifdef G4_LOGING_DEBUG
     NSLog(@"RECV QDZTimeout when waiting qdz,currentPlayId=%d\n", _gameManager._currentPlayerId);
 #endif
-    
+    if(_gameManager._currentPlayerId == _gameManager._selfId)
+    {
+        [_cmdPannel hide];
+        [self autoQDZ];
+    }
 }
 
 -(void)on_qdz_recv_qdz_info:(G4Packet*)packet
@@ -465,10 +484,19 @@ static NSString* out_card_info = @"不出";
             [[_gameManager getGamePlayer:i] resetCardCount];
         _gameState = G4_GAME_PLAYING;
         _gameManager._currentPlayerId = _gameManager._realMasterId;
-        _gameManager._firstOutPlayerId = -1;
+        _gameManager._firstOutPlayerId = _gameManager._currentPlayerId;
         [self doShowWatcher:25.0f];
         if(_gameManager._currentPlayerId == _gameManager._selfId)
-            [self doShowOutCardCmdPannel];
+        {
+            G4GamePlayer* player = [_gameManager getGamePlayer:_gameManager._selfId];
+            if(player._autoPlay)
+            {
+                [_watcher hide];
+                [self autoOutCard];
+            }
+            else
+                [self doShowOutCardCmdPannel];
+        }
         else
             [self server_outCard];        
     }   
@@ -520,8 +548,6 @@ static NSString* out_card_info = @"不出";
             [_gameManager rmvCards:cardArray];
         [_gameManager setOutedCard:packet];
         _gameManager._lastOutPlayerId = _gameManager._currentPlayerId;
-        if(_gameManager._firstOutPlayerId < 0)
-            _gameManager._firstOutPlayerId = _gameManager._currentPlayerId;
         [outPlayer resetCardCount];
     }
     if([outPlayer countOfCard] == 0)
@@ -540,7 +566,7 @@ static NSString* out_card_info = @"不出";
     if(_gameManager._currentPlayerId == _gameManager._lastOutPlayerId)
     {
         [_gameManager resetOutedCard];
-        _gameManager._firstOutPlayerId = -1;
+        _gameManager._firstOutPlayerId = _gameManager._currentPlayerId;
         _gameManager._lastOutPlayerId = -1;
         for(int i = 0; i < [_gameManager countOfPlayer]; i++)
         {
@@ -549,12 +575,20 @@ static NSString* out_card_info = @"不出";
             [player showOutedCard:NO];
         }
     }
-    [self doShowWatcher:15.0f];
+
     if(_gameManager._currentPlayerId == _gameManager._selfId)
     {
-        [self doShowOutCardCmdPannel];
+        G4GamePlayer* player = [_gameManager getGamePlayer:_gameManager._selfId];
+        if(player._autoPlay)
+            [self autoOutCard];
+        else
+        {
+            [self doShowWatcher:15.0f];
+            [self doShowOutCardCmdPannel];
+        }
         return;
     }
+    [self doShowWatcher:15.0f];
     [self server_outCard];
 }
 
@@ -571,14 +605,30 @@ static NSString* out_card_info = @"不出";
     [_gameManager roundResult:winner.charValue];
     [_gameManager reset];
     _gameManager._roundCount ++;
-    _gameState = G4_GAME_WAITING_PLAYERS_READY;
-    [_resultLayer show:YES :15.0f];
+    [_gameManager rmvDisconnectedPlayer];
     [_adLayer showAd:YES];
+    if([_gameManager countOfPlayer] < 4)
+    {
+        [_gameManager resetPlayRecord];
+        _gameState = G4_GAME_WAITING_PLAYERS;
+        [self initWaitView];
+        return;
+    }
+    _gameState = G4_GAME_WAITING_PLAYERS_READY;
+    [_resultLayer show:YES :10.0f];
+
 }
 
 -(void)on_game_playing_recv_time_out:(G4Packet*)packet
 {
-    
+    if(_gameManager._currentPlayerId == _gameManager._selfId)
+    {
+        G4GamePlayer* player = [_gameManager getGamePlayer:_gameManager._selfId];
+        player._timeOutCount++;
+        if(player._timeOutCount > 2)
+            player._autoPlay = YES;
+        [self autoOutCard];
+    }
 }
 
 -(void)doAppStart
@@ -731,8 +781,8 @@ static NSString* out_card_info = @"不出";
 {
     G4GamePlayer* player = [_gameManager getGamePlayer:_gameManager._currentPlayerId];
     [player showOutedCard:NO];
-
     [_cmdPannel showCmdOutCard];
+    [_cmdPannel enableNotoutCardButton:_gameManager._currentPlayerId != _gameManager._firstOutPlayerId];
     [self doEnableOutCardCmdButton];
 }
 

@@ -22,6 +22,7 @@
 @synthesize _playerState;
 @synthesize _roundScore;
 @synthesize _totalScore;
+@synthesize _timeOutCount;
 
 -(id)initWithPeerId:(NSString*)peerId playerName:(NSString*)playerName randomId:(int)randomId isSelf:(BOOL)isSelf computerPlayer:(BOOL)computerPlayer
 {
@@ -40,6 +41,7 @@
         _playerState = PLAYER_STATE_WAITING;
         _totalScore = 0;
         _roundScore = 0;
+        self._timeOutCount = 0;
     }
     return self;
 }
@@ -182,6 +184,11 @@
     return _peerId;
 }
 
+-(BOOL)needServerPlay
+{
+    return (self._computerPlayer || self._networkState != NET_STATUS_ALIVE);
+}
+
 @end
 
 @implementation G4GameManager
@@ -305,7 +312,7 @@
     for(char i = 0; i < [self countOfPlayer]; i++)
     {
         G4GamePlayer* player = (G4GamePlayer*)[_playerArray objectAtIndex:i];
-        if(!player._computerPlayer)
+        if(!player._computerPlayer && player._networkState == NET_STATUS_ALIVE)
         {
             _serverId = i;
             break;
@@ -455,6 +462,8 @@
         [player hideFloatInfo];
         [player showOutedCard:NO];
         player._playerState = PLAYER_STATE_READY;
+        player._autoPlay = NO;
+        player._timeOutCount = 0;
     }
     self._realMasterId = -1;
     self._firstMasterId = -1;
@@ -464,6 +473,17 @@
     self._lastOutPlayerId = -1;
     [_lastOutedCard release];
     _lastOutedCard = nil;
+}
+
+-(void)resetPlayRecord
+{
+    self._roundCount = 0;
+    for(char i = 0; i < [_playerArray count]; i++)
+    {
+        G4GamePlayer* player = [_playerArray objectAtIndex:i];
+        player._roundScore = 0;
+        player._totalScore = 0;
+    }    
 }
 
 -(void)roundResult:(char)winner
@@ -540,5 +560,24 @@
             return NO;
     }
     return YES;
+}
+
+-(void)gamePlayerDisconnected:(char)playerId
+{
+    G4GamePlayer* player = [self getGamePlayer:playerId];
+    player._playerState = NET_STATUS_DISCONNECTED;
+    [self resetServerId];
+}
+
+-(void)rmvDisconnectedPlayer
+{
+    NSMutableArray* rmvedArray = [[NSMutableArray alloc] init];
+    for(G4GamePlayer* player in _playerArray)
+    {
+        if(!player._computerPlayer && player._networkState != NET_STATUS_ALIVE)
+            [rmvedArray addObject:player];
+    }
+    [_playerArray removeObjectsInArray:rmvedArray];
+    [rmvedArray release];
 }
 @end

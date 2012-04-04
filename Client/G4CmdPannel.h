@@ -45,4 +45,5 @@
 -(void)createButton:(int)index:(float)x:(NSString*)normal:(NSString*)disable;
 -(void)buttonClicked:(UIButton*)sender;
 -(void)enableOutCardButton:(BOOL)enabled;
+-(void)enableNotoutCardButton:(BOOL)enabled;
 @end

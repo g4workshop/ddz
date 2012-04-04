@@ -60,6 +60,11 @@
     [_buttonCmd[CMD_ID_OUT_CARD] setEnabled:enabled];
 }
 
+-(void)enableNotoutCardButton:(BOOL)enabled
+{
+    [_buttonCmd[CMD_ID_NOT_OUT] setEnabled:enabled];
+}
+
 -(void)showCmdQDZ:(char*)enabled
 {
     for(int i = 0; i <= CMD_ID_CANCEL; i++)

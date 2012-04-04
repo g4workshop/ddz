@@ -369,12 +369,6 @@ char _get_card_number_continues_step_max_count(char* card_number, char count)
     }
 }
 
-+(int)calcCardScore:(CARD_ANALYZE_DATA*)data
-{
-    
-    return 0;
-}
-
 +(void)calcCardCount:(CARD_ANALYZE_DATA*)data:(CARD_COUNT_INFO*)countInfo
 {
     for(int i = 0; i < 15; i++)

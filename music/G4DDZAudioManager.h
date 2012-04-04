@@ -20,9 +20,9 @@
 
 @property(nonatomic)char backgroundMusicVolumn;
 
-+(id)sharedManager;
++(G4DDZAudioManager*)sharedManager;
 
-+(void)releaseManager;
+-(void)releaseManager;
 
 -(void)playBackgroundMusic;
 -(void)playTimeCountMusic:(BOOL)play;
@@ -35,4 +35,6 @@
 
 -(void)readMusicVolumn;
 -(void)writeMusicVolumn;
+
+
 @end

@@ -155,6 +155,7 @@
     _volumnSlider = [[UISlider alloc] initWithFrame:CGRectMake(x, y, self.frame.size.width - 2 * x, [G4CardSize optionViewSliderHeight])];
     _volumnSlider.minimumValue = 0.1;
     _volumnSlider.maximumValue = 1.0;
+    _volumnSlider.value = ((float)[G4DDZAudioManager sharedManager].backgroundMusicVolumn) / 10.0f;
     [_volumnSlider addTarget:self action:@selector(sliderValueChanged) forControlEvents:UIControlEventValueChanged];
     [self addSubview:_volumnSlider];
 }
@@ -186,7 +187,7 @@
 -(void)drawRect:(CGRect)rect
 {
     float t = sqrt(0.0858);
-    UIBezierPath* path = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, [G4CardSize optionViewCloseButtonSize] - [G4CardSize optionViewCloseButtonSize] / 2 * t, self.frame.size.width - [G4CardSize optionViewCloseButtonSize] + [G4CardSize optionViewCloseButtonSize] / 2 * t + [G4CardSize cardCorner] * t, self.frame.size.height - [G4CardSize optionViewCloseButtonSize]) cornerRadius:[G4CardSize cardCorner]];
+    UIBezierPath* path = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, [G4CardSize optionViewCloseButtonSize] - [G4CardSize optionViewCloseButtonSize] / 2 * t - [G4CardSize cardCorner] * t, self.frame.size.width - [G4CardSize optionViewCloseButtonSize] + [G4CardSize optionViewCloseButtonSize] / 2 * t + [G4CardSize cardCorner] * t, self.frame.size.height - [G4CardSize optionViewCloseButtonSize]) cornerRadius:[G4CardSize cardCorner]];
     [[[UIColor blackColor] colorWithAlphaComponent:0.3] set];
     [path fill];
     [[UIColor whiteColor] set];

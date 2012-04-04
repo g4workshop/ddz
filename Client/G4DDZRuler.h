@@ -63,9 +63,6 @@ typedef struct
 //根据上家出的牌和自己选择的牌来做出提示  
 +(void)analyzeCard:(CARD_ANALYZE_DATA*)data;
 
-//+(void)hintCard:(CARD_ANALYZE_DATA*)data;
-
-+(int)calcCardScore:(CARD_ANALYZE_DATA*)data;
 
 +(void)calcCardCount:(CARD_ANALYZE_DATA*)data:(CARD_COUNT_INFO*)countInfo;
 

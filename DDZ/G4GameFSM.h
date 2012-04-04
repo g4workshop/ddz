@@ -85,6 +85,8 @@
 
 -(void)on_all_state_recv_my_net_failed:(G4Packet*)packet;
 
+-(void)onPlayerDisconnected:(G4Packet*)packet;
+
 //actions
 
 -(void)doSendPlayerInfo:(NSString*)peerId name:(NSString*)name randomId:(int)randomId computerFlag:(char)computerFlag;
@@ -108,6 +110,7 @@
 -(void)doShowPlayResult;
 -(void)doDealingCards;
 -(void)doQDZ;
+
 @end
 
 

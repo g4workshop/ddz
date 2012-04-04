@@ -40,6 +40,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
     if([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone)
         [G4CardSize setDeviceType:DEVICE_TYPE_480_320];
     else
@@ -49,11 +50,6 @@
             
     _gameState = G4_GAME_INITING;
     _appState = G4_DDZ_APP_STATE_SELECT_MODE;
-//    
-//    G4OutedCardGroup* group = [[G4OutedCardGroup alloc] initWith:self.view.layer :GROUP_DIRECTION_LEFT :[G4CardSize leftOutGroupRect]];
-//    [group addCard:1];
-//    [group showGroup:YES];
-//    return;
 
     [self createModeWifiButton];
     [self createModeGamecenterButton];

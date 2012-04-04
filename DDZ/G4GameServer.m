@@ -15,6 +15,10 @@
 {
     if(_gameState == G4_GAME_WAITING_PLAYERS)
         [self doSendComputerPlayerToPlayer:[[_gameManager getGamePlayer:_gameManager._serverId] getPeerId]];
+    else if(_gameState == G4_GAME_DOING_QDZ)
+        [self server_QDZ];
+    else if(_gameState == G4_GAME_PLAYING)
+        [self server_outCard];
 }
 
 -(void)server_playerAdded:(NSString*)peerId
@@ -45,9 +49,9 @@
     if(![_gameManager isServer])
         return;
     G4GamePlayer* player = [_gameManager getGamePlayer:_gameManager._currentPlayerId];
-    if(!player._computerPlayer)
+    if(![player needServerPlay])
         return;
-    [self doSendQDZInfo:4];
+    [self autoQDZ];
 }
 
 -(void)server_outCard
@@ -55,16 +59,9 @@
     if(_gameState != G4_GAME_PLAYING || ![_gameManager isServer])
         return;
     G4GamePlayer* player = [_gameManager getGamePlayer:_gameManager._currentPlayerId];
-    CARD_ANALYZE_DATA data;
-    data._selectedCount = 0;
-    if(player._computerPlayer)
-    {
-#ifdef G4_LOGING_DEBUG
-        NSLog(@"next player %d is computer player,so send out card info\n",
-              _gameManager._currentPlayerId);
-#endif
-        [self doSendOutCardInfo:&data playerId:_gameManager._currentPlayerId];
-    }
+
+    if([player needServerPlay])
+        [self autoOutCard];
 }
 
 -(void)server_cardOuted
@@ -88,4 +85,35 @@
         }
     }
 }
+
+-(void)autoQDZ
+{
+    char enabled[5] = {1, 1, 1, 1, 1};
+    char score = [self doCalcCurrentPlayerQDZScore];
+    for(char i = 0; i < score || i < _gameManager._currentScore + 1; i++)
+        enabled[i] = 0;
+    if(score != _gameManager._currentScore)
+    {
+        enabled[0] = 0;
+        enabled[4] = 0;
+    }
+    if(enabled[4] != 0)
+        [self doSendQDZInfo:4];
+    else for(char i = 0; i < 4; i++)
+    {
+        if(enabled[i] != 0)
+        {
+            [self doSendQDZInfo:i];
+            return;
+        }
+    }
+}
+
+-(void)autoOutCard
+{
+    CARD_ANALYZE_DATA data;
+    data._selectedCount = 0;
+    [self doSendOutCardInfo:&data playerId:_gameManager._currentPlayerId];
+}
+
 @end

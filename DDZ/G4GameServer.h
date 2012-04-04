@@ -19,4 +19,7 @@
 -(void)server_outCard;
 -(void)server_cardOuted;
 
+-(void)autoQDZ;
+-(void)autoOutCard;
+
 @end

@@ -37,11 +37,11 @@
          continueAfterRunningActions = "No"
          isPathRelative = "1"
          filePath = "DDZ/G4ViewController.m"
-         timestampString = "355214854.127956"
+         timestampString = "355230874.205369"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "236"
-         endingLineNumber = "236"
+         startingLineNumber = "232"
+         endingLineNumber = "232"
          landmarkName = "-viewDidDisappear:"
          landmarkType = "5">
       </FileBreakpoint>
@@ -233,25 +233,11 @@
          continueAfterRunningActions = "No"
          isPathRelative = "1"
          filePath = "DDZ/G4ViewController.m"
-         timestampString = "355214854.127956"
+         timestampString = "355230874.205369"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "115"
-         endingLineNumber = "115"
-         landmarkName = "-touchesEnded:withEvent:"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         isPathRelative = "1"
-         filePath = "DDZ/G4ViewController.m"
-         timestampString = "355214854.127956"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "219"
-         endingLineNumber = "219"
+         startingLineNumber = "215"
+         endingLineNumber = "215"
          landmarkName = "-viewWillAppear:"
          landmarkType = "5">
       </FileBreakpoint>
@@ -261,11 +247,11 @@
          continueAfterRunningActions = "No"
          isPathRelative = "1"
          filePath = "DDZ/G4ViewController.m"
-         timestampString = "355214854.127956"
+         timestampString = "355230874.205369"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "222"
-         endingLineNumber = "222"
+         startingLineNumber = "218"
+         endingLineNumber = "218"
          landmarkName = "-viewWillAppear:"
          landmarkType = "5">
       </FileBreakpoint>
@@ -317,11 +303,11 @@
          continueAfterRunningActions = "No"
          isPathRelative = "1"
          filePath = "DDZ/G4GameFSM.m"
-         timestampString = "355133149.658518"
+         timestampString = "355230874.205369"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "250"
-         endingLineNumber = "250"
+         startingLineNumber = "265"
+         endingLineNumber = "265"
          landmarkName = "-on_waiting_cards_info_recv_card_info:"
          landmarkType = "5">
       </FileBreakpoint>
@@ -331,11 +317,11 @@
          continueAfterRunningActions = "No"
          isPathRelative = "1"
          filePath = "DDZ/G4ViewController.m"
-         timestampString = "355214854.127956"
+         timestampString = "355230874.205369"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "126"
-         endingLineNumber = "126"
+         startingLineNumber = "122"
+         endingLineNumber = "122"
          landmarkName = "-touchesBegan:withEvent:"
          landmarkType = "5">
       </FileBreakpoint>
@@ -345,11 +331,11 @@
          continueAfterRunningActions = "No"
          isPathRelative = "1"
          filePath = "DDZ/G4ViewController.m"
-         timestampString = "355214854.127956"
+         timestampString = "355230874.205369"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "140"
-         endingLineNumber = "140"
+         startingLineNumber = "136"
+         endingLineNumber = "136"
          landmarkName = "-touchesMoved:withEvent:"
          landmarkType = "5">
       </FileBreakpoint>
@@ -359,12 +345,26 @@
          continueAfterRunningActions = "No"
          isPathRelative = "1"
          filePath = "DDZ/G4GameFSM.m"
-         timestampString = "355133149.658518"
+         timestampString = "355230874.205369"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "265"
-         endingLineNumber = "265"
+         startingLineNumber = "280"
+         endingLineNumber = "280"
          landmarkName = "-doDealingCards"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         isPathRelative = "1"
+         filePath = "music/G4DDZAudioManager.m"
+         timestampString = "355216687.504518"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "34"
+         endingLineNumber = "34"
+         landmarkName = "-playBackgroundMusic"
          landmarkType = "5">
       </FileBreakpoint>
    </FileBreakpoints>

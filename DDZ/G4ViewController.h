@@ -28,6 +28,7 @@
 
 int random_player_random_id(void);
 
+
 @interface G4ViewController : UIViewController
 {
 @private
