@@ -246,16 +246,17 @@ static NSString* out_card_info = @"不出";
     NSLog(@"[WaitingCards]->CardInfo->[WaitingDealingCard]\n");
 #endif
 
-    G4CharArray* cardArray = [packet get:G4_DDZ_KEY_CARD];
+    NSData* cardArray = [packet get:G4_DDZ_KEY_CARD];
     _gameManager._realMasterId = -1;
     _gameManager._firstMasterId = -1;
     _gameManager._currentScore = -1;
 
+    const char* bytes = [cardArray bytes];
     for(int j = 0; j < 25; j++)
     {
         for(int i = 0; i < 4; i++)
         {
-            char ch = [cardArray get: j * 4 + i];
+            char ch = bytes[j * 4 + i];
             [[_gameManager getGamePlayer:i] addCard:ch];
             if(ch == 40 && _gameManager._firstMasterId == -1)
                 _gameManager._firstMasterId = i;
@@ -524,14 +525,14 @@ static NSString* out_card_info = @"不出";
     [_watcher hide];
     NSString* peerId = [packet get:G4_KEY_COMM_ID];
     NSNumber* playerId = [packet get:G4_DDZ_KEY_ID];
-    G4CharArray* cardArray = [packet get:G4_DDZ_KEY_CARD];
+    NSData* cardArray = [packet get:G4_DDZ_KEY_CARD];
     G4GamePlayer* sendPlayer = nil;
     if(peerId != nil)
         sendPlayer = [_gameManager findGamePlayer:peerId];
     else
         sendPlayer = [_gameManager getGamePlayer:_gameManager._selfId];
 #ifdef G4_LOGING_INFO
-    NSLog(@"when playing game recv card out info from peer:%@,send playerId=%d,cardCount=%d,outplayerId=%d", peerId, sendPlayer._playerId, cardArray == nil?0:[cardArray count], playerId.charValue);
+    NSLog(@"when playing game recv card out info from peer:%@,send playerId=%d,cardCount=%d,outplayerId=%d", peerId, sendPlayer._playerId, cardArray == nil?0:[cardArray length], playerId.charValue);
 #endif
     if(playerId.charValue != _gameManager._currentPlayerId)
         _gameManager._currentPlayerId = playerId.charValue;
@@ -902,7 +903,10 @@ static NSString* out_card_info = @"不出";
 {
     G4Packet* packet = [[G4Packet alloc] initWith:G4_DDZ_OUT_CARD_INFO];
     if(data->_selectedCount != 0)
-        [packet putCharArray:G4_DDZ_KEY_CARD :data->_cardSelected :data->_selectedCount];
+    {
+        NSData* data1 = [NSData dataWithBytes:data->_cardSelected length:data->_selectedCount];
+        [packet put:G4_DDZ_KEY_CARD :data1];
+    }
     [packet put:G4_DDZ_KEY_ID : [NSNumber numberWithChar:playerId]];
     
 #ifdef G4_LOGING_INFO

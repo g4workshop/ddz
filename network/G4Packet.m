@@ -8,249 +8,328 @@
 
 #import "G4Packet.h"
 
-void put_u32_to_buffer(int value, unsigned char* buffer)
-{
-    buffer[0] = value & 0xFF;
-    buffer[1] = (value >> 8) & 0xFF;
-    buffer[2] = (value >> 16) & 0xFF;
-    buffer[3] = (value >> 24) & 0xFF;
-}
+@implementation G4Stream
 
-int get_u32_from_buffer(unsigned char* buffer)
-{
-    int rst = buffer[0] | buffer[1] << 8 | buffer[2] << 16 | buffer[3] << 24;
-    return rst;
-}
-
-void put_u16_to_buffer(int value, unsigned char* buffer)
-{
-    buffer[0] = value & 0xFF;
-    buffer[1] = (value >> 8) & 0xFF;
-}
-
-int get_u16_from_buffer(unsigned char* buffer)
-{
-    int rst = buffer[0] | buffer[1] << 8;
-    return rst;
-}
-
-void print_buffer(unsigned char* buffer, int buffer_length)
-{
-    for(int i = 0; i < buffer_length; i++)
-    {
-        if(i % 10 == 0 && i != 0)
-            printf("\n");
-        printf("%02X ", buffer[i]);
-    }
-    printf("\n");
-}
-
-@implementation NSString(NetPacketObject)
-
--(int)toBytes:(unsigned char*)buffer:(int)bufferSize
-{
-    const char* p = [self UTF8String];
-    int length = strlen(p) + 1;
-    if(bufferSize < length)
-        return -1;
-    memcpy(buffer, p, length);
-    return length;
-}
-
--(id)initWithBytes:(unsigned char*)buffer
-{
-    return (self = [self initWithUTF8String:(const char*)buffer]);
-}
-
-@end
-
-
-@implementation NSNumber(NetPacketObject)
-
--(int)toBytes:(unsigned char*)buffer:(int)bufferSize
-{
-    buffer[0] = self.objCType[0];
- //   printf("%s\n", self.objCType);
-    switch (buffer[0]) {
-        case 'i':
-            put_u32_to_buffer(self.intValue, buffer + 1);
-            return 5;
-        case 'c':
-            buffer[1] = self.charValue;
-            return 2;
-        default:
-            return -1;
-    }
-}
-
--(id)initWithBytes:(unsigned char*)buffer
-{
-    switch (buffer[0]) {
-        case 'i':
-        {
-            int value = get_u32_from_buffer(&buffer[1]);
-            self = [self initWithInt:value];
-            break;
-        }
-        case 'c':
-            self = [self initWithChar:buffer[1]];
-            break;
-        default:
-            self = [self initWithInt:0];
-            break;
-    }
-    return self;
-}
-
-@end
-
-@implementation NSArray(NetPacketObject)
-
--(int)toBytes:(unsigned char*)buffer:(int)bufferSize
-{
-    if(bufferSize < 8)
-        return -1;
-    int offset = 0;
-    int count = [self count];
-    if(count > 0xFF)
-        return -1;
-    buffer[0] = count;
-    offset += 1;
-    for(int i = 0; i < count; i++)
-    {
-        int tmp = [G4NetPacketPair objectToBytes:[self objectAtIndex:i] :&buffer[offset + 1] :bufferSize - offset];
-        if(tmp < 0)
-            return -1;
-        if(tmp > 0xFF)
-            return -1;
-        buffer[offset] = tmp;
-        offset += tmp + 1;
-    }
-    return offset;
-}
-
--(id)initWithBytes:(unsigned char*)buffer
-{
-    NSMutableArray* array = [[NSMutableArray alloc] init];
-    int count = buffer[0];
-    int offset = 1;
-    for(int i = 0; i < count; i++)
-    {
-        int size = buffer[offset];
-        offset += 1;
-        id tmp = [G4NetPacketPair objectFromBytes:&buffer[offset]];
-        offset += size;
-        [array addObject:tmp];
-    }
-    NSArray* tmp = [NSArray arrayWithArray:array];
-    [array release];
-    return tmp;
-}
-
-@end
-
-@implementation G4CharArray
-
--(int)toBytes:(unsigned char*)buffer:(int)bufferSize
-{
-    if(bufferSize < _count)
-        return -1;
-    put_u16_to_buffer(_count, buffer);
-    memcpy(&buffer[2], _charBuffer, _count);
-    return _count + 2;
-}
-
--(id)initWithBytes:(unsigned char*)buffer
-{
-    if(self = [super init])
-    {
-        _count = get_u16_from_buffer(buffer);
-    
-        _bufferSize = ((_count + DEFAULT_CHAR_COUNT - 1) / DEFAULT_CHAR_COUNT) * DEFAULT_CHAR_COUNT;
-        _charBuffer = (char*)malloc(_bufferSize * sizeof(char));
-        
-        memcpy(_charBuffer, &buffer[2], _count);
-    }
-    return self;
-}
-
--(id)initWithBuffer:(char*)buffer:(int)count
-{
-    if(self = [super init])
-    {
-        _count = count;
-        _bufferSize = ((_count + DEFAULT_CHAR_COUNT - 1) / DEFAULT_CHAR_COUNT) * DEFAULT_CHAR_COUNT;
-        _charBuffer = (char*)malloc(_bufferSize * sizeof(char));
-        
-        memcpy(_charBuffer, buffer, _count);
-    }
-    return self;
-}
-
--(void)reset
-{
-    if(_bufferSize > DEFAULT_CHAR_COUNT)
-    {
-        free(_charBuffer);
-        _charBuffer = (char*)malloc(DEFAULT_CHAR_COUNT * sizeof(char));
-        _bufferSize = DEFAULT_CHAR_COUNT;
-    }
-    memset(_charBuffer, 0, _bufferSize);
-    _count = 0;
-}
+@synthesize data = _data;
+@synthesize offset = _offset;
+@synthesize success = _success;
 
 -(id)init
 {
     if(self = [super init])
     {
-        _charBuffer = (char*)malloc(DEFAULT_CHAR_COUNT * sizeof(char));
-        _bufferSize = DEFAULT_CHAR_COUNT;
-        _count = 0;
+        _size = MAX_PACKET_LENGTH;
+        _data = [[NSMutableData alloc] initWithCapacity:_size];
+        _offset = 0;
+        _success = YES;
+    }
+    return self;
+}
+
+-(id)initWithData:(NSData*)data
+{
+    _data = [data retain];
+    _offset = 0;
+    _success = YES;
+    _size = data.length;
+    return self;
+}
+
+-(id)initWithBuffer:(char*)buffer:(int)length
+{
+    if(self = [super init])
+    {
+        _data = [[NSMutableData alloc] initWithBytes:buffer length:length];
+        _offset = 0;
+        _success = YES;
+        _size = length;
     }
     return self;
 }
 
 -(void)dealloc
 {
-    free(_charBuffer);
-    [super dealloc];
+    [_data release];
 }
 
--(void)put:(char)ch
+-(void)toStream:(G4Stream*)stream
 {
-    if(_count >= _bufferSize)
+    [stream put16:_offset];
+    [stream putBytes:(char*)_data.bytes :_offset];
+}
+
+-(void)fromStream:(G4Stream *)stream
+{
+    _offset = 0;
+    _success = 0;
+    const char* tmp = [stream bufferWithSizeInData:&_size];
+    [((NSMutableData*)_data)appendBytes:tmp length:_size];
+}
+
+-(void)put32:(int)value
+{
+    char buffer[4];
+    buffer[0] = value & 0xFF;
+    buffer[1] = (value >> 8) & 0xFF;
+    buffer[2] = (value >> 16) & 0xFF;
+    buffer[3] = (value >> 24) & 0xFF;
+    [self putBytes:buffer :4];
+}
+
+-(void)put16:(short)value
+{
+    char buffer[2];
+    buffer[0] = value & 0xFF;
+    buffer[1] = (value >> 8) & 0xFF;
+    [self putBytes:buffer :2];
+}
+
+-(void)put8:(char)value
+{
+    [self putBytes:&value :1]; 
+}
+
+-(void)putBytes:(char*)value:(int)length
+{
+    if(![_data isKindOfClass:[NSMutableData class]])
+        SET_ERROR_RETURN;
+    if(_offset + length >= _size)
+        SET_ERROR_RETURN;
+    [((NSMutableData*)_data) appendBytes:value length:length];
+    _offset += length;  
+    NSLog(@"putbytes,data is %@\n", _data);
+}
+
+-(int)get32
+{
+    char buffer[4];
+    [self getBytes:buffer :4];
+    ERROR_RETURN;
+    return (buffer[0] | buffer[1] << 8 | buffer[2] << 16 | buffer[3] << 24);
+}
+
+-(short)get16
+{
+    char buffer[2];
+    [self getBytes:buffer :2];
+    ERROR_RETURN;
+    return (buffer[0] | buffer[1] << 8);
+}
+
+-(char)get8
+{
+    char value;
+    [self getBytes:&value :1];
+    ERROR_RETURN;
+    return value;
+}
+
+-(void)getBytes:(char*)value:(int)length
+{
+    if(_offset + length > _size)
+        SET_ERROR_RETURN;
+    NSRange range;
+    range.location = _offset;
+    range.length = length;
+    [_data getBytes:value range:range];
+    _offset += length;
+}
+
+-(void)putObject:(id)object
+{
+    if([object isKindOfClass:[NSString class]])
     {
-        _bufferSize += DEFAULT_CHAR_COUNT;
-        char* tmp = (char*)malloc(_bufferSize * sizeof(char));
-        memcpy(tmp, _charBuffer, _count);
-        free(_charBuffer);
-        _charBuffer = tmp;
+        [self put8:1];
+        [self putString:object];
     }
-    _charBuffer[_count++] = ch;
+    else if([object isKindOfClass:[NSNumber class]])
+    {
+        [self put8:2];
+        [self putNumber:object];
+    }
+    else if([object isKindOfClass:[NSArray class]])
+    {
+        [self put8:3];
+        [self putArray:object];
+    }
+    else if([object isKindOfClass:[G4PacketPair class]])
+    {
+        [self put8:4];
+        [((G4PacketPair*)object) toStream:self];
+    }
+    else if([object isKindOfClass:[G4Stream class]])
+    {
+        [self put8:5];
+        [((G4Stream*)object) toStream:self];
+    }
+    else if([object isKindOfClass:[NSData class]])
+    {
+        [self put8:6];
+        [self putData:object];
+    }
+    else
+    {
+        SEL sel = NSSelectorFromString(@"toStream:");
+        if(![object respondsToSelector:sel])
+            return;
+        [self put8:7];
+        NSString* classString = NSStringFromClass([object class]);
+        [self putString:classString];
+        [object performSelector:sel withObject:self];
+    }
+
 }
 
--(int)count
+-(id)getObject
 {
-    return _count;
+    char type = [self get8];
+    id object = nil;
+    switch (type) 
+    {
+        case 1:
+            return [self getString];
+        case 2:
+            return [self getNumber];
+            break;
+        case 3:
+            return [self getArray];
+            break;
+        case 4:
+        {
+            G4PacketPair* packetPair = [[[G4PacketPair alloc] init] autorelease];
+            [packetPair fromStream:self];
+            return packetPair;
+        }
+        case 5:
+        {
+            G4Stream* stream = [[[G4Stream alloc] init] autorelease];
+            [stream fromStream:self];
+            return stream;
+        }
+        case 6:
+            return [self getData];
+        case 7:
+        {
+            NSString* classString = [self getString];
+            Class c = NSClassFromString(classString);
+            if(!c)
+                return nil;
+            SEL sel = NSSelectorFromString(@"fromStream:");
+            if(![c instancesRespondToSelector:sel])
+                return nil;
+            object = [[[c alloc] init] autorelease];
+            [object performSelector:sel withObject:self];
+            return object;
+        }
+        default:
+            return nil;
+    }  
+    return nil;
 }
 
--(char)get:(int)index
+-(void)putNumber:(NSNumber*)number
 {
-    if(index < _count)
-        return _charBuffer[index];
-    return 0;
+    [self put8:number.objCType[0]];
+    switch (number.objCType[0]) {
+        case 'i':
+            [self put32:number.intValue];
+            break;
+        case 'c':
+            [self put8:number.charValue];
+            break;
+        default:
+            break;
+    }
 }
 
--(char*)get
+-(NSNumber*)getNumber
+{    
+    char value = [self get8];
+    switch (value) {
+        case 'i':
+            return [NSNumber numberWithInt:[self get32]];
+        case 'c':
+            return [NSNumber numberWithChar:[self get8]];
+        default:
+            return [NSNumber numberWithInt:0];
+    }
+}
+
+-(void)putString:(NSString*)string
 {
-    return _charBuffer;
+    const char* p = [string UTF8String];
+    short length = (short)strlen(p) + 1;
+    [self put16:length];
+    [self putBytes:(char*)p :length];
+}
+
+-(NSString*)getString
+{
+    return [NSString stringWithUTF8String:[self bufferWithSizeInData:NULL]];
+}
+
+-(void)putData:(NSData*)data
+{
+    [self put16:data.length];
+    [self putBytes:(char*)data.bytes :data.length];
+}
+
+-(NSData*)getData
+{
+    short size = [self get16];
+    NSData* data = [NSData dataWithBytes:[self buffer] length:size];
+    _offset += size;
+    return data;
+}
+
+-(void)putArray:(NSArray*)array
+{
+    char count = (char)[array count];
+    [self put8:count];
+    
+    for(char i = 0; i < count; i++)
+    {
+        id object = [array objectAtIndex:i];
+        [self putObject:object];
+    }
+}
+
+-(NSArray*)getArray
+{
+    NSMutableArray* array = [[[NSMutableArray alloc] init] autorelease];
+    
+    char count = [self get8];
+    
+    for(char i = 0; i < count; i++)
+    {
+        id object = [self getObject];
+        if(object != nil)
+            [array addObject:object];
+    }
+    return array;
+}
+
+
+-(const char*)bufferWithSizeInData:(short*)size
+{
+    short tmp_size = [self get16];
+    const char* tmp = &_data.bytes[_offset];
+    _offset += tmp_size;
+    if(size)
+        *size = tmp_size;
+    return tmp;
+}
+
+-(const char*)buffer
+{
+    return &_data.bytes[_offset];
 }
 
 @end
 
-@implementation G4NetPacketPair
+@implementation G4PacketPair
 
--(id)init:(int)tag:(id)object
+-(id)init:(short)tag:(id)object
 {
     if(self = [super init])
     {
@@ -265,93 +344,16 @@ void print_buffer(unsigned char* buffer, int buffer_length)
     [_object release];
 }
 
--(int)toBytes:(unsigned char*)buffer:(int)bufferSize
+-(void)toStream:(G4Stream*)stream
 {
-    if(bufferSize < 4)
-        return -1;
-    put_u16_to_buffer(_tag, buffer);
-    int offset = 2;
-    return [G4NetPacketPair objectToBytes:_object :&buffer[offset] :bufferSize - offset] + 2;
+    [stream put16:_tag];
+    [stream putObject:_object];
 }
 
--(id)initWithBytes:(unsigned char*)buffer
+-(void)fromStream:(G4Stream *)stream
 {
-    if(self = [super init])
-    {
-        _tag = get_u16_from_buffer(buffer);
-        _object = [[G4NetPacketPair objectFromBytes:&buffer[2]] retain];
-    }
-    return self;
-}
-
-+(int)objectToBytes:(id)object:(unsigned char*)buffer:(int)bufferSize
-{
-    if([object isKindOfClass:[NSString class]])
-        buffer[0] = OBJECT_TYPE_STRING;
-    else if([object isKindOfClass:[NSNumber class]])
-        buffer[0] = OBJECT_TYPE_NUMBER;
-    else if([object isKindOfClass:[NSArray class]])
-        buffer[0] = OBJECT_TYPE_ARRAY;
-    else if([object isKindOfClass:[G4CharArray class]])
-        buffer[0] = OBJECT_TYPE_CHARARRAY;
-    else
-        buffer[0] = OBJECT_TYPE_ELSE;
-    
-    if(bufferSize < 5)
-        return -1;
-
-    if(buffer[0] != OBJECT_TYPE_ELSE)
-    {
-        int tmp = [object toBytes:&buffer[1] :bufferSize - 1];
-        return tmp + 1;
-    }
-    
-    int offset = 2;
-    NSString* classString = NSStringFromClass([object class]);
-    int tmp = [classString toBytes:&buffer[offset] :bufferSize - offset];
-    if(tmp < 0)
-        return tmp;
-    if(tmp > 127)
-        return -1;
-    
-    buffer[1] = (char)tmp;
-    
-    offset += tmp;
-    
-    tmp = [object toBytes:&buffer[offset] :bufferSize - offset];
-    if(tmp < 0)
-        return tmp;
-    
-    offset += tmp;
-        
-    return offset;
-}
-
-+(id)objectFromBytes:(unsigned char*)buffer
-{
-    if(buffer[0] == OBJECT_TYPE_STRING)
-        return [[[NSString alloc] initWithBytes:&buffer[1]] autorelease];
-    else if(buffer[0] == OBJECT_TYPE_NUMBER)
-        return [[[NSNumber alloc] initWithBytes:&buffer[1]] autorelease];
-    else if(buffer[0] == OBJECT_TYPE_ARRAY)
-        return [[[NSArray alloc] initWithBytes:&buffer[1] ]autorelease] ;
-    else if(buffer[0] == OBJECT_TYPE_CHARARRAY)
-        return [[[G4CharArray alloc] initWithBytes:&buffer[1]] autorelease];
-    
-    int offset = 2;
-    
-    NSString* classString = [[NSString alloc] initWithBytes:&buffer[offset]];
-    Class objectClass = NSClassFromString(classString);
-    [classString release];
-    if(objectClass == Nil)
-        return nil;
-    
-    offset += buffer[1];
-    
-    id tmp = [[[objectClass alloc] initWithBytes:&buffer[offset]] autorelease];
-    
-    return tmp;
-    
+    _tag = [stream get16];
+    _object = [[stream getObject] retain];
 }
 
 @end
@@ -360,7 +362,7 @@ void print_buffer(unsigned char* buffer, int buffer_length)
 
 @synthesize packetId = _packetId;
 
--(id)initWith:(int)packetId
+-(id)initWith:(short)packetId
 {
     if(self = [super init])
     {
@@ -371,7 +373,7 @@ void print_buffer(unsigned char* buffer, int buffer_length)
     return nil;
 }
 
-+(id)packetWith:(int)packetId
++(id)packetWith:(short)packetId
 {
     return [[[G4Packet alloc] initWith:packetId] autorelease];
 }
@@ -380,56 +382,28 @@ void print_buffer(unsigned char* buffer, int buffer_length)
 -(id)initWithData:(NSData *)data
 {
     if(self = [super init])
-    {
-        //_pairs = [[NSMutableArray alloc] initWithBytes:(unsigned char*)data.bytes];
-    
-        _pairs = [[NSMutableArray alloc] init];
-        unsigned char* buffer = (unsigned char*)data.bytes;
-        int length = data.length;
-        
-        //printf("RECV:");
-        //print_buffer(buffer, length);
-        
-        _packetId = get_u16_from_buffer(buffer);
-        int count = buffer[2];
- 
-        int offset = 3;
-        for(int i = 0; i < count; i++)
-        {
-            if(offset > length)
-                return nil;
-            int size = buffer[offset];
-            offset += 1;
-            id tmp = [[G4NetPacketPair alloc] initWithBytes:&buffer[offset]];//[G4NetPacketPair objectFromBytes:&buffer[offset]];
-            offset += size;
-            [_pairs addObject:tmp];
-            [tmp release];
-        }
-
+    {    
+        G4Stream* stream = [[G4Stream alloc] initWithData:data];
+        _packetId = [stream get16];
+        _pairs = [[stream getArray] retain];
+        [stream release];
         return self;
     }
     return nil;
 }
 
--(void)put:(int)tag:(id)object
+-(void)put:(short)tag:(id)object
 {
     if(object == nil)
         return;
-    G4NetPacketPair* pair = [[G4NetPacketPair alloc] init:tag :object];
-    [_pairs addObject:pair];
+    G4PacketPair* pair = [[G4PacketPair alloc] init:tag :object];
+    [(NSMutableArray*)_pairs addObject:pair];
     [pair release];
 }
 
--(void)putCharArray:(int)tag:(char*)buffer:(int)count
+-(id)get:(short)tag
 {
-    G4CharArray* charArray = [[G4CharArray alloc] initWithBuffer:buffer :count];
-    [self put : tag : charArray];
-    [charArray release];
-}
-
--(id)get:(int)tag
-{
-    for (G4NetPacketPair* pair in _pairs)
+    for (G4PacketPair* pair in _pairs)
     {
         if(pair->_tag == tag)
             return pair->_object; 
@@ -439,25 +413,15 @@ void print_buffer(unsigned char* buffer, int buffer_length)
 
 -(NSData*)toData
 {
-    unsigned char buffer[MAX_PACKET_LENGTH];
-    int offset = 0;
-    put_u16_to_buffer(_packetId, buffer);
-    offset += 2;
-    int count = [_pairs count];
-    buffer[2] = count;
-    offset += 1;
-    for(int i = 0; i < count; i++)
-    {
-        G4NetPacketPair* pair = (G4NetPacketPair*)[_pairs objectAtIndex:i];
-        int tmp = [pair toBytes:&buffer[offset + 1] :MAX_PACKET_LENGTH - offset];
-        if(tmp < 0)
-            return nil;
-        if(tmp > 0xFF)
-            return nil;
-        buffer[offset] = tmp;
-        offset += tmp + 1;
-    }
-    return [NSData dataWithBytes:(const void*)buffer length:offset];;
+    G4Stream* stream = [[G4Stream alloc] init];
+    
+    [stream put16:_packetId];
+    [stream putArray:_pairs];
+    
+    NSData* data = [[stream.data retain] autorelease];
+    
+    [stream release];
+    return data;
 }
 
 
@@ -468,6 +432,6 @@ void print_buffer(unsigned char* buffer, int buffer_length)
 
 -(void)removeAll
 {
-    [_pairs removeAllObjects];
+    [(NSMutableArray*)_pairs removeAllObjects];
 }
 @end

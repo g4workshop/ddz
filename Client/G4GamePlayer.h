@@ -67,7 +67,7 @@
 
 -(void)showOutedCard:(BOOL)show;
 -(void)addOutedCard:(char)cardNumber;
--(void)moveCardToOutedCard:(G4CharArray*) cardArray;
+-(void)moveCardToOutedCard:(NSData*) cardArray;
 
 -(void)clearAllCards;
 -(void)setCardCenterX:(float)x;
@@ -98,9 +98,9 @@
 {
 @private
     NSMutableArray* _playerArray;
-    G4CharArray* _dzCardArray;
+    char _dzCardArray[8];
     G4CardGroup* _cardGroup;
-    G4CharArray* _lastOutedCard;
+    NSData* _lastOutedCard;
 }
 
 @property(nonatomic)char _selfId;
@@ -141,7 +141,7 @@
 -(void)initPlayerParameter:(CALayer*)superLayer;
 -(void)hideCardGroup;
 
--(void)putDZCard:(G4CharArray*)cardArray;
+-(void)putDZCard:(NSData*)cardArray;
 
 -(void)moveDZCard;
 -(void)moveCardToGroup;
@@ -153,7 +153,7 @@
 -(char)getSelectedCard:(char*)cardNumbers;
 -(void)unSelectAllCard;
 -(void)cardSwitchSelect:(CGPoint)pt;
--(void)rmvCards:(G4CharArray*) cardArray;
+-(void)rmvCards:(NSData*) cardArray;
 -(void)setSelfOutFromX;
 
 -(BOOL)cardGroupYInvalid:(float)y;

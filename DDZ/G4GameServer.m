@@ -39,7 +39,8 @@
     
     G4Packet* packet = [[G4Packet alloc] initWith:G4_DDZ_CARD_INFO];
     
-    [packet putCharArray:G4_DDZ_KEY_CARD :[_deckCard getCardNumber] : [_deckCard getCount]];
+    NSData* data = [NSData dataWithBytesNoCopy:[_deckCard getCardNumber] length:[_deckCard getCount]];
+    [packet put:G4_DDZ_KEY_CARD :data];
     [_comm sendPacketToAllInclueSelf:packet];
     [packet release];
 }

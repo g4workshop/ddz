@@ -8,110 +8,101 @@
 
 #import <Foundation/Foundation.h>
 
-#define PACKET_TYPE_DEAL_A_CARD         0
-#define PACKET_TYPE_ALLOC_PLAYER_ID     1
-#define PACKET_TYPE_CARD_DISPLAYED      2
-#define PACKET_TYPE_START_DEAL          3
-
 #define MAX_PACKET_LENGTH               512
 
-void put_u32_to_buffer(int value, unsigned char* buffer);
-void put_u16_to_buffer(int value, unsigned char* buffer);
-int get_u32_from_buffer(unsigned char* buffer);
-int get_u16_from_buffer(unsigned char* buffer);
+#define OBJECT_TYPE_OF_G4STREAM             0
+#define OBJECT_TYPE_OF_NSSTRING             1
+#define OBJECT_TYPE_OF_NSNUMBER             2
+#define OBJECT_TYPE_OF_NSARRAY              3
+#define OBJECT_TYPE_OF_G4PAIR               4
 
-void print_buffer(unsigned char* buffer, int buffer_length);
+                   
+#define SET_ERROR_RETURN                    {_success = NO;return;}
+#define ERROR_RETURN                        if(!_success) return 0
 
-@protocol G4NetPacketObject <NSObject>
+//我没弄明白NSEncoder,不然以下代码可以使用NSEncoder^_^
 
--(int)toBytes:(unsigned char*)buffer:(int)bufferSize;
--(id)initWithBytes:(unsigned char*)buffer;
-
-@end
-
-@interface NSString(G4NetPacketObject)
-
--(int)toBytes:(unsigned char*)buffer:(int)bufferSize;
--(id)initWithBytes:(unsigned char*)buffer;
-@end
-
-@interface NSNumber(G4NetPacketObject)
-
--(int)toBytes:(unsigned char*)buffer:(int)bufferSize;
--(id)initWithBytes:(unsigned char*)buffer;
-
-@end
-
-@interface NSArray(G4NetPacketObject)
-
--(int)toBytes:(unsigned char*)buffer:(int)bufferSize;
--(id)initWithBytes:(unsigned char*)buffer;
-
-@end
-
-#define DEFAULT_CHAR_COUNT          32
-
-@interface G4CharArray : NSObject<G4NetPacketObject> {
+@interface G4Stream : NSObject {
 @private
-    char* _charBuffer;
-    int _bufferSize;
-    int _count;
+    NSData* _data;
+    short _offset;
+    BOOL _success;
+    short _size;
 }
 
--(int)toBytes:(unsigned char*)buffer:(int)bufferSize;
--(id)initWithBytes:(unsigned char*)buffer;
--(id)initWithBuffer:(char*)buffer:(int)count;
--(void)reset;
+@property(nonatomic,readonly)NSData* data;
+@property(nonatomic)short offset;
+@property(nonatomic,readonly)BOOL success;
+
 -(id)init;
+-(id)initWithData:(NSData*)data;
+-(id)initWithBuffer:(char*)buffer:(int)length;
+-(void)toStream:(G4Stream*)stream;
+-(void)fromStream:(G4Stream*)stream;
+
 -(void)dealloc;
--(void)put:(char)ch;
--(int)count;
--(char)get:(int)index;
--(char*)get;
+
+-(void)put32:(int)value;
+-(void)put16:(short)value;
+-(void)put8:(char)value;
+-(void)putBytes:(char*)value:(int)length;
+
+-(int)get32;
+-(short)get16;
+-(char)get8;
+-(void)getBytes:(char*)value:(int)length;
+
+-(void)putObject:(id)object;
+-(id)getObject;
+
+-(const char*)bufferWithSizeInData:(short*)size;
+-(const char*)buffer;
+
+-(void)putNumber:(NSNumber*)number;
+-(NSNumber*)getNumber;
+
+-(void)putString:(NSString*)string;
+-(NSString*)getString;
+
+-(void)putData:(NSData*)data;
+-(NSData*)getData;
+
+-(void)putArray:(NSArray*)array;
+-(NSArray*)getArray;
 
 @end
 
-#define OBJECT_TYPE_STRING      0
-#define OBJECT_TYPE_NUMBER      1
-#define OBJECT_TYPE_ARRAY       2
-#define OBJECT_TYPE_CHARARRAY   3
-#define OBJECT_TYPE_ELSE        4
-
-@interface G4NetPacketPair : NSObject<G4NetPacketObject> 
+@interface G4PacketPair : NSObject 
 {
 @public
-    int _tag;
+    short _tag;
     id _object;
 }
 
--(id)init:(int)tag:(id)object;
+-(id)init:(short)tag:(id)object;
+
 -(void)dealloc;
 
--(int)toBytes:(unsigned char*)buffer:(int)bufferSize;
--(id)initWithBytes:(unsigned char*)buffer;
+-(void)toStream:(G4Stream*)stream;
+-(void)fromStream:(G4Stream*)stream;
 
-+(int)objectToBytes:(id)object:(unsigned char*)buffer:(int)bufferSize;
-+(id)objectFromBytes:(unsigned char*)buffer;
 @end
 
 
 @interface G4Packet : NSObject
 {
 @private
-    NSMutableArray* _pairs;
-    int _packetId;
+    NSArray* _pairs;
+    short _packetId;
 }
 
-@property(nonatomic)int packetId;
+@property(nonatomic)short packetId;
 
--(id)initWith:(int)packetId;
+-(id)initWith:(short)packetId;
 -(id)initWithData:(NSData*)data;
-+(id)packetWith:(int)packetId;
--(void)put:(int)tag:(id)object;
--(id)get:(int)tag;
--(void)putCharArray:(int)tag:(char*)buffer:(int)count;
-
-
++(id)packetWith:(short)packetId;
+-(void)put:(short)tag:(id)object;
+-(id)get:(short)tag;
 
 -(void)dealloc;
 

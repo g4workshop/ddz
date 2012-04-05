@@ -109,12 +109,13 @@
     [_outedCardGroup addCard:cardNumber];
 }
 
--(void)moveCardToOutedCard:(G4CharArray*) cardArray
+-(void)moveCardToOutedCard:(NSData*) cardArray
 {
-    for(char i = 0; i < [cardArray count]; i++)
+    const char* bytes = [cardArray bytes];
+    for(char i = 0; i < [cardArray length]; i++)
     {
-        [self rmvCard:[cardArray get:i]];
-        [self addOutedCard:[cardArray get:i]];
+        [self rmvCard:bytes[i]];
+        [self addOutedCard:bytes[i]];
     }
 }
 
@@ -210,7 +211,8 @@
     if(self =  [super init])
     {
         _playerArray = [[NSMutableArray alloc] init];
-        _dzCardArray = [[G4CharArray alloc] init];
+        for(char i = 0; i < 8; i++)
+            _dzCardArray[i] = -1;
         self._roundCount = 0;
     }
     return self;
@@ -219,7 +221,6 @@
 -(void)dealloc
 {
     [_playerArray release];
-    [_dzCardArray release];
     [_cardGroup release];
     [_lastOutedCard release];
 }
@@ -397,21 +398,25 @@
     [_cardGroup hide];
 }
 
--(void)putDZCard:(G4CharArray*)cardArray
+-(void)putDZCard:(NSData*)cardArray
 {
-    [_dzCardArray reset];
-    for(char i = 100; i < [cardArray count]; i++)
-        [_dzCardArray put:[cardArray get:i]];
+    const char* bytes = [cardArray bytes];
+    for(char i = 0; i < 8; i++)
+        _dzCardArray[i] = -1;
+    for(char i = 100; i < [cardArray length] && i < 108; i++)
+        _dzCardArray[i - 100] = bytes[i];
 }
 
 -(void)moveDZCard
 {
     G4GamePlayer* player = [self getGamePlayer:self._realMasterId];
-    for(char i = 0; i < [_dzCardArray count]; i++)
+    for(char i = 0; i < 8; i++)
     {
+        if(_dzCardArray[i] < 0)
+            return;
         if(self._realMasterId == self._selfId)
-            [_cardGroup addPokerCard:[_dzCardArray get:i]];
-        [player addCard:[_dzCardArray get:i]];
+            [_cardGroup addPokerCard:_dzCardArray[i]];
+        [player addCard:_dzCardArray[i]];
     }
 }
 
@@ -443,17 +448,19 @@
     return [_cardGroup cardSwitchSelect:pt];
 }
 
--(void)rmvCards:(G4CharArray*) cardArray
+-(void)rmvCards:(NSData*) cardArray
 {
-    for(char i = 0; i < [cardArray count]; i++)
-        [_cardGroup rmvPokerCard:[cardArray get:i]];
+    const char* bytes = [cardArray bytes];
+    for(char i = 0; i < [cardArray length]; i++)
+        [_cardGroup rmvPokerCard:bytes[i]];
     [_cardGroup layoutCardsNeedCalcNewCardShowWidth];
 }
 
 -(void)reset
 {
     [_cardGroup hide];
-    [_dzCardArray reset];
+    for(char i = 0; i < 8; i++)
+        _dzCardArray[i] = -1;
     for(char i = 0; i < [_playerArray count]; i++)
     {
         G4GamePlayer* player = [_playerArray objectAtIndex:i];
@@ -544,9 +551,9 @@
         data->_outedCount = 0;
     else
     {
-        data->_outedCount = [_lastOutedCard count];
-        for(int i = 0; i < data->_outedCount; i++)
-            data->_cardOuted[i] = [_lastOutedCard get:i];
+        data->_outedCount = [_lastOutedCard length];
+        const char* bytes = [_lastOutedCard bytes];
+        memcpy(data->_cardOuted, bytes, data->_outedCount);
     }
 }
 
