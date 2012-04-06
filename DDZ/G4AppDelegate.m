@@ -33,6 +33,7 @@
     }
     self.window.rootViewController = self.viewController;
     [self.window makeKeyAndVisible];
+    //[application setStatusBarHidden:YES withAnimation:UIStatusBarAnimationFade];
     return YES;
 }
 

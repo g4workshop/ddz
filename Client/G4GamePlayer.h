@@ -86,6 +86,8 @@
 -(NSString*)getPeerId;
 
 -(BOOL)needServerPlay;
+-(char)findCard:(char)digit;
+
 @end
 
 @protocol G4GameManagerDelegate <NSObject>
@@ -101,6 +103,7 @@
     char _dzCardArray[8];
     G4CardGroup* _cardGroup;
     NSData* _lastOutedCard;
+    G4CardTotal* _cardTotal;
 }
 
 @property(nonatomic)char _selfId;
@@ -150,7 +153,8 @@
 
 -(void)resetPlayerId;
 
--(char)getSelectedCard:(char*)cardNumbers;
+-(void)getSelectedCard:(CARD_ANALYZE_DATA*)data;
+-(void)getTotalCard:(CARD_ANALYZE_DATA*)data;
 -(void)unSelectAllCard;
 -(void)cardSwitchSelect:(CGPoint)pt;
 -(void)rmvCards:(NSData*) cardArray;
@@ -173,5 +177,8 @@
 
 -(void)gamePlayerDisconnected:(char)playerId;
 -(void)rmvDisconnectedPlayer;
+
+-(void)hint;
+-(void)autoOutCard:(G4Packet*)packet;
 
 @end

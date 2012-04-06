@@ -310,17 +310,55 @@
     }
 }
 
--(char)getSelectedCard:(char *)cardNumbers
+-(void)getSelectedCard:(CARD_ANALYZE_DATA*)data;
 {
-    char count = 0;
+    data->_selectedCount = 0;
     for(G4PokerCard* card in _cardArray)
     {
         if(card.selected)
         {
-            cardNumbers[count++] = card.cardNumber;
+            data->_cardSelected[data->_selectedCount++] = card.cardNumber;
         }
     }
-    return count;
+}
+
+-(void)getTotalCard:(CARD_ANALYZE_DATA*)data;
+{
+    data->_totalCount = 0;
+    for(G4PokerCard* card in _cardArray)
+        data->_cardTotal[data->_totalCount++] = card.cardNumber;
+}
+
+-(void)selectCard:(G4CardTotal*)total
+{
+    char dataIndex = 0;
+    G4PokerCard* card = nil;
+    for(int i = [_cardArray count] - 1; i >= 0; i--)
+        printf("%d ", ((G4PokerCard*)[_cardArray objectAtIndex:i]).cardNumber);
+
+    printf("\n");
+        
+    char* hintCards = [total getHintCard];
+    
+    for(char i = [_cardArray count] - 1; i >= 0; i--)
+    {
+        card = (G4PokerCard*)[_cardArray objectAtIndex:i];
+        if(dataIndex >= [total getHintCount])
+        {
+            if(card.selected)
+                [card switchSelect];
+            continue;
+        }
+        char dataNumber = hintCards[dataIndex];
+        char cardNumber = card.cardNumber / 4;
+        printf("data[%d-%d],card[%d-%d]\n", dataIndex, dataNumber, i, cardNumber);
+        if(dataNumber == cardNumber)
+        {
+            if(!card.selected)
+                [card switchSelect];
+            dataIndex++;
+        }
+    }
 }
 
 -(void)unSelectAllCard

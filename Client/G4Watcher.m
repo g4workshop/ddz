@@ -9,6 +9,7 @@
 #import "G4Watcher.h"
 #import "G4CardSize.h"
 #import "G4CardImage.h"
+#import "G4DDZAudioManager.h"
 
 @implementation G4Watcher
 
@@ -33,7 +34,7 @@
     return self;
 }
 
--(void)show:(float)interval atPoint:(CGPoint)point;
+-(void)show:(float)interval :(float)audioInterval atPoint:(CGPoint)point
 {
     if(_layer.superlayer != nil)
         [self hide];
@@ -43,6 +44,7 @@
     
     _interval = interval;
     _currentTimes = 0;
+    _audioInterval = audioInterval;
     [self calcParameters];
     _timer = [[NSTimer scheduledTimerWithTimeInterval:_intervalPerTime target:self selector:@selector(timeOut) userInfo:nil repeats:YES] retain];
     [_superLayer addSublayer:_layer];
@@ -68,11 +70,14 @@
 {
     if(_currentTimes >= _times)
     {
+        [[G4DDZAudioManager sharedManager] playTimeCountMusic:NO];
         [self hide];
         [delegate timeReached];
         return;
     }
     _currentTimes ++;
+    if((_times - _currentTimes) * _intervalPerTime < _audioInterval)
+        [[G4DDZAudioManager sharedManager] playTimeCountMusic:YES];
     [_layer setNeedsDisplay];
 }
 

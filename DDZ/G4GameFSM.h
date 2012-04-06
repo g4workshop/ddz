@@ -41,9 +41,9 @@
 #define G4_DDZ_KEY_SCORE            0x1004
 #define G4_DDZ_KEY_WINNER           0x1005
 
-#define G4_LOGING_INFO
-#define G4_LOGING_DEBUG
-#define G4_LOGING_ERROR
+//#define G4_LOGING_INFO
+//#define G4_LOGING_DEBUG
+//#define G4_LOGING_ERROR
 
 @interface G4ViewController(G4GameFSM)<G4WatcherDelegate,G4CmdDelegate,G4CardGroupDelegate,G4MHandlerDelegate,G4ResultDelegate>
 
@@ -104,7 +104,6 @@
 -(void)doClearAllFloatInfo;
 -(void)doShowDZInfo;
 -(void)doEnableOutCardCmdButton;
--(void)doShowWaitingPlayerWatcher:(float)timeInterval;
 -(char)doCalcCurrentPlayerQDZScore;
 -(void)doSendOutCardInfo:(CARD_ANALYZE_DATA*)data playerId:(char)playerId;
 -(void)doShowPlayResult;

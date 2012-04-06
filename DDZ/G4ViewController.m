@@ -41,6 +41,8 @@
 {
     [super viewDidLoad];
     
+  //  [[[G4CardTotal alloc] init] setHintNumbers];
+    
     if([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone)
         [G4CardSize setDeviceType:DEVICE_TYPE_480_320];
     else

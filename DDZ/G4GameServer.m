@@ -112,9 +112,19 @@
 
 -(void)autoOutCard
 {
-    CARD_ANALYZE_DATA data;
-    data._selectedCount = 0;
-    [self doSendOutCardInfo:&data playerId:_gameManager._currentPlayerId];
+    if(_gameManager._currentPlayerId == _gameManager._firstOutPlayerId)
+    {
+        G4Packet* packet = [[G4Packet alloc] initWith:G4_DDZ_OUT_CARD_INFO];
+        [_gameManager autoOutCard:packet];
+        [_comm sendPacketToAllInclueSelf:packet];
+        [packet release];
+    }
+    else
+    {
+        CARD_ANALYZE_DATA data;
+        data._selectedCount = 0;
+        [self doSendOutCardInfo:&data playerId:_gameManager._currentPlayerId];
+    }
 }
 
 @end

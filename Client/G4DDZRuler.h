@@ -50,7 +50,8 @@ typedef struct
     char _cardHint[33];  //提示的牌
     char _hintCount;
     BOOL _smartHint;  //是否智能提示
-    CARD_ANALYZE_RESULT result;
+    CARD_ANALYZE_RESULT _result;
+    CARD_COUNT_INFO _count_info;
 }CARD_ANALYZE_DATA;
 
 @interface G4DDZRuler : NSObject
@@ -63,9 +64,120 @@ typedef struct
 //根据上家出的牌和自己选择的牌来做出提示  
 +(void)analyzeCard:(CARD_ANALYZE_DATA*)data;
 
++(void)hintCard:(CARD_ANALYZE_DATA*)data;
++(void)hintCardWithNoOutedCard:(CARD_ANALYZE_DATA*)data;
++(void)hintPerhapsStraight:(CARD_ANALYZE_DATA*)data from:(char)index;
++(void)hintPerhapsDouble3:(CARD_ANALYZE_DATA*)data from:(char)index;
++(void)hintPerhapsThree3:(CARD_ANALYZE_DATA*)data from:(char)index;
++(char)findThree3:(CARD_ANALYZE_DATA*)data from:(char)index;
++(char)findThree:(CARD_ANALYZE_DATA*)data from:(char)index;
++(char)findDouble:(CARD_ANALYZE_DATA*)data from:(char)index;
++(char)findDouble2:(CARD_ANALYZE_DATA*)data from:(char)index:(char*)count;
 
-+(void)calcCardCount:(CARD_ANALYZE_DATA*)data:(CARD_COUNT_INFO*)countInfo;
++(void)calcContinue:(CARD_ANALYZE_DATA*)data:(char*)continueIndex:(char)count;
+
++(void)calcCardCount:(CARD_ANALYZE_DATA*)data;
 
 +(char)calcQDZScore:(CARD_ANALYZE_DATA*)data:(char)currentScore;
+
+
+@end
+
+#define MAX_CARD_COUNT_BY_NUMBER        33
+#define MAX_CARD_COUNT_BY_TYPE          15
+#define GENERAL_CARD_COUNT_BY_TYPE      13
+
+
+@class G4GamePlayer;
+@interface G4CardNumbers : NSObject 
+{
+@protected
+    char _cardNumbers[MAX_CARD_COUNT_BY_NUMBER];
+    char _cardCount[MAX_CARD_COUNT_BY_TYPE];
+    char _currIndex;
+}
+
+-(void)reset;
+-(void)setCardNumber:(G4GamePlayer*)player;
+-(void)calcCardCount;
+-(void)resetIndex;
+
+@end
+
+@interface G4CardOut : G4CardNumbers
+{
+@private
+    char _oneDoubleIndex;
+    char _multiDoubleIndex;
+    char _multiDoubleCount;
+    char _threeIndex;
+    char _threeCount;
+}
+
+@property(nonatomic)char _result;
+@property(nonatomic)char _outCount;
+@property(nonatomic)char _minDigit1;
+@property(nonatomic)char _minDigit2;
+
+-(void)analyze;
+-(BOOL)isBomb;
+-(BOOL)isSingle;
+-(BOOL)isJokerBomb;
+-(void)setDoubleInfo;
+-(void)setThreeInfo;
+-(void)setResult;
+-(void)setThree1;
+-(void)setThreeMulti;
+-(void)setDouble;
+
+
+-(char)getCountOfCount:(char)count;
+
+@end
+@interface G4CardTotal : G4CardNumbers
+{
+@private
+    char _doubleContinueIndex[MAX_CARD_COUNT_BY_TYPE];
+    char _ThreeContinueIndex[MAX_CARD_COUNT_BY_TYPE];
+    char _bombCount;
+    char _hintCard[MAX_CARD_COUNT_BY_NUMBER];
+    char _hintNumber[MAX_CARD_COUNT_BY_NUMBER];
+    char _hintCount;
+}
+
+@property(nonatomic)BOOL _sentry;
+@property(nonatomic)char _dzCardCount;
+@property(nonatomic)BOOL _tryOut;
+
+-(char)getHintCount;
+-(char*)getHintCard;
+-(char*)getHintNumbers;
+-(void)reset;
+-(void)setCardNumber:(G4GamePlayer *)player;
+-(void)calcDoubleContinue;
+-(void)calcThreeContinue;
+-(void)calcContinue:(char*)continueIndex:(char)count;
+-(void)calcBombCount;
+-(char)calcQDZScore:(char)currentScore;
+-(void)hint;
+-(void)hintCard;
+-(void)setHintNumbers;
+-(void)hintSingle;
+-(void)hintDouble;
+-(void)hintDoubleContinue1:(char)index;
+-(void)hintDoubleContinue2:(char)index;
+-(void)hintDoubleContinue3:(char)count:(char)index;
+
+-(void)hintThree;
+-(BOOL)hint2;
+-(BOOL)hintJoker;
+-(void)hintBomb;
+-(void)resetIndex;
+-(BOOL)hasJokerBomb;
+-(char)calcContinueCount:(char)count;
+
+-(char)findSingleDouble:(char)exclueseIdx;
+
+-(void)putHintCard:(char)count:(char)cardCount:(char)index;
 
 @end

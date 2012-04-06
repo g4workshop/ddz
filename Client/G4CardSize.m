@@ -20,7 +20,7 @@ static float card_border_width[] = {0.5f, 1.0f};
 static float edge_space[] = {5.0f, 15.0f};
 static float card_max_show_width[] = {30.0f, 60.0f};
 static float device_view_width[] = {480.0f, 1024.0f};
-static float device_view_height[] = {300.0f, 748.0f};
+static float device_view_height[] = {320.0f, 768.0f};
 static float card_min_show_width[] = {12.0f, 28.0f};
 static float line_width[] = {0.8f, 2.0f};
 

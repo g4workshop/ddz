@@ -61,6 +61,7 @@ int random_player_random_id(void);
     BOOL _moveSelect;
     
     UIButton* _cmdOptionButton;
+
 }
 
 @property(nonatomic)char _appState;

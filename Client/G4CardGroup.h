@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "G4PokerCard.h"
+#import "G4DDZRuler.h"
 
 
 @protocol G4CardGroupDelegate <NSObject>
@@ -45,7 +46,6 @@
 -(void)setMaxCardCount:(char)max;
 -(void)calcCardShowWidth:(char)count;
 -(void)cardSwitchSelect:(CGPoint)point;
--(char)getSelectedCard:(char*)cardNumbers;
 -(void)unSelectAllCard;
 -(float)getGroupCenterX;
 -(float)getFirstSelectX;
@@ -60,6 +60,10 @@
 -(BOOL)yInvalid:(float)y;
 -(void)selectCard:(BOOL)select fromIndex:(char)fromIndex toIndex:(char)toIndex;
 -(char)indexOfCardByX:(float)x;
+
+-(void)getSelectedCard:(CARD_ANALYZE_DATA*)data;
+-(void)getTotalCard:(CARD_ANALYZE_DATA*)data;
+-(void)selectCard:(G4CardTotal*)total;
 
 @end
 

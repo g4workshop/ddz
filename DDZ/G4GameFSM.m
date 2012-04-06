@@ -710,7 +710,7 @@ static NSString* out_card_info = @"不出";
 #ifdef G4_LOGING_DEBUG
     NSLog(@"Do ShowWatcherOnCenter %.2f\n", interval);
 #endif
-    [_watcher show:interval atPoint:CGPointMake(([G4CardSize deviceViewSize].width - [G4CardSize watcherSize] ) / 2, ([G4CardSize deviceViewSize].height - [G4CardSize watcherSize]) / 2)];
+    [_watcher show:interval :0.0f atPoint:CGPointMake(([G4CardSize deviceViewSize].width - [G4CardSize watcherSize] ) / 2, ([G4CardSize deviceViewSize].height - [G4CardSize watcherSize]) / 2)];
 }
 
 -(void)doSendComputerPlayerToPlayer:(NSString*)peerId
@@ -769,10 +769,10 @@ static NSString* out_card_info = @"不出";
 -(void)doEnableOutCardCmdButton
 {
     CARD_ANALYZE_DATA data;
-    data._selectedCount = [_gameManager getSelectedCard:data._cardSelected];
+    [_gameManager getSelectedCard:&data];
     [_gameManager copyOutedCard:&data];
     [G4DDZRuler analyzeCard:&data];
-    if(data.result._analyzeResult == CARD_INVALID)
+    if(data._result._analyzeResult == CARD_INVALID)
         [_cmdPannel enableOutCardButton:NO];
     else
         [_cmdPannel enableOutCardButton:YES];
@@ -796,7 +796,10 @@ static NSString* out_card_info = @"不出";
     NSLog(@"Show WaitingPlayer,CurrentPlayerId=%d,GroupDirect=%d,Point=(%.2f,%.2f)\n",
           _gameManager._currentPlayerId, direction, point.x, point.y);
 #endif
-    [_watcher show:interval atPoint:point];
+    float audioInterval = 0.0f;
+    if(_gameManager._currentPlayerId == _gameManager._selfId)
+        audioInterval = 5.0f;
+    [_watcher show:interval :audioInterval atPoint:point];
 }
 
 -(void)doSendQDZInfo:(char)score
@@ -843,14 +846,6 @@ static NSString* out_card_info = @"不出";
     }
 }
 
--(void)doShowWaitingPlayerWatcher:(float)timeInterval
-{
-    G4GamePlayer* player = [_gameManager getGamePlayer:_gameManager._currentPlayerId];
-    char direction = [player getGroupDirection];
-    CGPoint point = [G4CardSize playerWatcherPoint:direction];
-    [_watcher show:timeInterval atPoint:point];
-}
-
 -(char)doCalcCurrentPlayerQDZScore
 {
     CARD_ANALYZE_DATA data;
@@ -886,7 +881,7 @@ static NSString* out_card_info = @"不出";
         else if(cmdId == CMD_ID_OUT_CARD)
         {
             CARD_ANALYZE_DATA data;
-            data._selectedCount = [_gameManager getSelectedCard:data._cardSelected];
+            [_gameManager getSelectedCard:&data];
             [_gameManager setSelfOutFromX];
             [self doSendOutCardInfo:&data playerId:_gameManager._selfId];
         }
@@ -895,6 +890,11 @@ static NSString* out_card_info = @"不出";
             CARD_ANALYZE_DATA data;
             data._selectedCount = 0;
             [self doSendOutCardInfo:&data playerId:_gameManager._selfId];
+        }
+        else if(cmdId == CMD_ID_HINT)
+        {
+            [_gameManager hint];
+            [self doEnableOutCardCmdButton];
         }
     }
 }

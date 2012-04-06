@@ -97,7 +97,7 @@
         SET_ERROR_RETURN;
     [((NSMutableData*)_data) appendBytes:value length:length];
     _offset += length;  
-    NSLog(@"putbytes,data is %@\n", _data);
+    //NSLog(@"putbytes,data is %@\n", _data);
 }
 
 -(int)get32

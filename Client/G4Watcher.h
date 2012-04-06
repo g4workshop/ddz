@@ -26,12 +26,13 @@
     int _currentTimes;
     float _intervalPerTime;
     float _angle;
+    float _audioInterval;
 }
 
 @property(nonatomic,assign)NSObject<G4WatcherDelegate>* delegate;
 
 -(id)init:(CALayer*)superLayer;
--(void)show:(float)interval atPoint:(CGPoint)point;
+-(void)show:(float)interval :(float)audioInterval atPoint:(CGPoint)point;
 -(void)hide;
 -(void)dealloc;
 -(void)timeOut;

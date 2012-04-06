@@ -3,10 +3,46 @@
    version = "1.0">
    <ContextStates>
       <ContextState
-         contextName = "-[NSArray(NetPacketObject) initWithBytes:]:G4Packet.m">
+         contextName = "-[G4ViewController(G4GameFSM) onCmd:]:G4GameFSM.m">
+      </ContextState>
+      <ContextState
+         contextName = "dyld_stub_time:(null)">
          <PersistentStrings>
             <PersistentString
-               value = "(char*)buffer">
+               value = "self">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[G4CardTotal hint]:G4DDZRuler.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "_cardCount[_currIndex]">
+            </PersistentString>
+            <PersistentString
+               value = "_currIndex">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[G4CardGroup selectCard:]:G4CardGroup.m">
+      </ContextState>
+      <ContextState
+         contextName = "-[G4CardTotal hintDouble]:G4DDZRuler.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "_cardCount[_currIndex]">
+            </PersistentString>
+            <PersistentString
+               value = "_currIndex">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[G4CardTotal calcContinue::]:G4DDZRuler.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "_currIndex">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -25,12 +61,42 @@
          contextName = "+[G4NetPacketPair objectToBytes:::]:G4Packet.m">
       </ContextState>
       <ContextState
-         contextName = "dyld_stub_time:(null)">
+         contextName = "-[G4CardTotal setHintNumbers]:G4DDZRuler.m">
          <PersistentStrings>
             <PersistentString
-               value = "self">
+               value = "_hintNumber">
+            </PersistentString>
+            <PersistentString
+               value = "i">
             </PersistentString>
          </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[G4CardTotal calcContinueCount:]:G4DDZRuler.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "_currIndex">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[G4CardTotal hintDoubleContinue1:]:G4DDZRuler.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "_ThreeContinueIndex">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[NSArray(NetPacketObject) initWithBytes:]:G4Packet.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "(char*)buffer">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "+[G4DDZRuler hintPerhapsStraight:from:]:G4DDZRuler.m">
       </ContextState>
    </ContextStates>
 </VariablesViewState>

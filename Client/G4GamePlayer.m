@@ -190,6 +190,15 @@
     return (self._computerPlayer || self._networkState != NET_STATUS_ALIVE);
 }
 
+-(char)findCard:(char)digit
+{
+    for(NSNumber* cardNumber in _cardArray)
+    {
+        if(cardNumber.charValue / 4 == digit)
+            return cardNumber.charValue;
+    }
+    return -1;
+}
 @end
 
 @implementation G4GameManager
@@ -214,6 +223,7 @@
         for(char i = 0; i < 8; i++)
             _dzCardArray[i] = -1;
         self._roundCount = 0;
+        _cardTotal = nil;
     }
     return self;
 }
@@ -223,6 +233,7 @@
     [_playerArray release];
     [_cardGroup release];
     [_lastOutedCard release];
+    [_cardTotal release];
 }
 -(BOOL)isPlayerExists:(NSString*)name andRandomId:(int)randomId;
 {
@@ -433,9 +444,14 @@
     [_cardGroup show:fromIndex :YES];
 }
 
--(char)getSelectedCard:(char*)cardNumbers
+-(void)getSelectedCard:(CARD_ANALYZE_DATA*)data
 {
-    return [_cardGroup getSelectedCard:cardNumbers];
+    [_cardGroup getSelectedCard:data];
+}
+
+-(void)getTotalCard:(CARD_ANALYZE_DATA*)data
+{
+    [_cardGroup getTotalCard:data];
 }
 
 -(void)unSelectAllCard
@@ -587,4 +603,36 @@
     [_playerArray removeObjectsInArray:rmvedArray];
     [rmvedArray release];
 }
+
+-(void)autoOutCard:(G4Packet *)packet
+{
+    if(!_cardTotal)
+        _cardTotal = [[G4CardTotal alloc] init];
+    G4GamePlayer* player = [self getGamePlayer:self._currentPlayerId];
+    [_cardTotal setCardNumber:player];
+    [_cardTotal hint];
+
+    char* tmp = [_cardTotal getHintNumbers];
+    char* tmp2 = [_cardTotal getHintCard];
+    for(char i = 0; i < [_cardTotal getHintCount]; i++)
+    {
+        printf("%d(%d) ", tmp[i], tmp2[i]);
+    }
+    printf("\n");
+    NSData* data = [NSData dataWithBytes:[_cardTotal getHintNumbers] length:[_cardTotal getHintCount]];
+    [packet put:G4_DDZ_KEY_CARD :data];
+    [packet put:G4_DDZ_KEY_ID : [NSNumber numberWithChar:self._currentPlayerId]];
+}
+
+-(void)hint
+{
+    if(self._currentPlayerId != self._selfId)
+        return;
+    if(!_cardTotal)
+        _cardTotal = [[G4CardTotal alloc] init];
+    [_cardTotal setCardNumber:[self getGamePlayer:self._selfId]];
+    [_cardTotal hint];
+    [_cardGroup selectCard:_cardTotal];
+}
+
 @end
